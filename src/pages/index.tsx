@@ -46,7 +46,7 @@ export default function Home() {
         <div className="flex justify-center">
           <button
             onClick={handleLogin}
-            className="cursor-not-allowed rounded-lg bg-red-600 px-4 py-3 disabled:bg-red-400"
+            className="rounded-lg bg-red-600 px-4 py-3"
           >
             Login with <span className="font-semibold">Google Account</span>
           </button>
