@@ -1,6 +1,30 @@
+import { type GetServerSideProps } from "next";
+import { signIn } from "next-auth/react";
 import Head from "next/head";
+import { getServerAuthSession } from "~/server/auth";
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (session !== null) {
+    return {
+      redirect: {
+        destination: "/profile",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { session },
+  };
+};
 
 export default function Home() {
+  function handleLogin() {
+    void signIn("google");
+  }
+
   return (
     <>
       <Head>
@@ -21,8 +45,8 @@ export default function Home() {
         {/* Login */}
         <div className="flex justify-center">
           <button
+            onClick={handleLogin}
             className="cursor-not-allowed rounded-lg bg-red-600 px-4 py-3 disabled:bg-red-400"
-            disabled
           >
             Login with <span className="font-semibold">Google Account</span>
           </button>
