@@ -35,6 +35,7 @@ export default function Profile() {
       <pre>
         <p>data: {JSON.stringify(session, null, 2)}</p>
       </pre>
+      <p>Role: {session?.user.role}</p>
 
       <button onClick={() => void signOut()} className="bg-green-500">
         Sign out
