@@ -48,8 +48,22 @@ export default function ResourcePage() {
   }
 
   return (
-    <DashboardLayout>
-      <pre>{JSON.stringify(resource, null, 2)}</pre>
+    <DashboardLayout label={resource}>
+      <div className="flex h-full flex-col gap-2 overflow-hidden">
+        <div>
+          <h2 className="text-3xl font-semibold capitalize">{resource}</h2>
+          <hr />
+        </div>
+
+        {/* Table */}
+        <div className="flex-grow overflow-auto bg-green-900"></div>
+
+        <div className="flex flex-row-reverse">
+          <button className="rounded-md bg-blue-500 px-4 py-2 font-semibold">
+            Create
+          </button>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }

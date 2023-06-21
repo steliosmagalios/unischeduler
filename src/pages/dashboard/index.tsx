@@ -42,7 +42,7 @@ const dummyResources: Record<string, number> = {
 
 export default function DashboardHome() {
   return (
-    <DashboardLayout>
+    <DashboardLayout label="Dashboard">
       <div className="flex flex-col gap-4">
         <div>
           <h2 className="text-3xl font-semibold">Available Resources</h2>
