@@ -1,5 +1,5 @@
 import { type GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -47,10 +47,13 @@ export default function Profile() {
             <h1 className="text-4xl font-bold">UniScheduler</h1>
 
             <div className="flex items-center gap-2">
-              <Link className="font-semibold text-teal-300" href="#">
+              <Link className="font-semibold text-teal-300" href="/dashboard">
                 Go to Dashboard
               </Link>
-              <button className="rounded-md bg-red-500 px-3 py-2 font-semibold">
+              <button
+                className="rounded-md bg-red-500 px-3 py-2 font-semibold"
+                onClick={() => void signOut()}
+              >
                 Sign Out
               </button>
             </div>
