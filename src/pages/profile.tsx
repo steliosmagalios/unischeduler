@@ -1,9 +1,9 @@
 import { type GetServerSideProps } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import Timetable from "~/components/timetable";
+import UserCard from "~/components/user-card";
 import { getServerAuthSession } from "~/server/auth";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -47,9 +47,11 @@ export default function Profile() {
             <h1 className="text-4xl font-bold">UniScheduler</h1>
 
             <div className="flex items-center gap-2">
-              <Link className="font-semibold text-teal-300" href="/dashboard">
-                Go to Dashboard
-              </Link>
+              {session?.user.role === "Admin" && (
+                <Link className="font-semibold text-teal-300" href="/dashboard">
+                  Go to Dashboard
+                </Link>
+              )}
               <button
                 className="rounded-md bg-red-500 px-3 py-2 font-semibold"
                 onClick={() => void signOut()}
@@ -64,23 +66,7 @@ export default function Profile() {
           {/* User card and daily schedule */}
           <div className="col-span-3 flex h-full flex-col gap-4 overflow-hidden">
             {/* User card */}
-            <div className="flex gap-2">
-              <Image
-                className="rounded-md"
-                src={session?.user.image || ""}
-                alt="user profile picture"
-                width={64}
-                height={64}
-              />
-              <div className="my-0.5 flex flex-col justify-between truncate">
-                <p className="truncate text-lg font-semibold">
-                  {session?.user.name}
-                </p>
-                <span className="self-start rounded-full bg-green-800 px-4 text-sm font-semibold uppercase">
-                  {session?.user.role}
-                </span>
-              </div>
-            </div>
+            <UserCard session={session} />
 
             {/* Daily schedule */}
             <div className="flex flex-grow flex-col gap-2 overflow-hidden">
