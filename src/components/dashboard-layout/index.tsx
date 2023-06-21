@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import UserCard from "../user-card";
@@ -57,8 +57,12 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
         <div>
           <UserCard session={session} />
           <div className="flex justify-evenly gap-2">
-            <button className="text-blue-500">Profile</button>
-            <button className="text-red-500">Logout</button>
+            <Link href="/profile" className="text-blue-500">
+              Profile
+            </Link>
+            <button onClick={() => void signOut()} className="text-red-500">
+              Logout
+            </button>
           </div>
         </div>
       </aside>
