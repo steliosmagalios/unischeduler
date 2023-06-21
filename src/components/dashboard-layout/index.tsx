@@ -2,6 +2,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import UserCard from "../user-card";
+import NavLink from "./nav-link";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -44,13 +45,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
 
         <nav className="flex flex-grow flex-col gap-2 px-2">
           {navRoutes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className="rounded-md bg-blue-300 p-2 text-lg"
-            >
-              {route.label}
-            </Link>
+            <NavLink key={route.href} {...route} />
           ))}
         </nav>
 
