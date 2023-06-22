@@ -2,6 +2,7 @@ import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import DashboardLayout from "~/components/dashboard-layout";
+import DataGrid from "~/components/data-grid";
 import { getServerAuthSession } from "~/server/auth";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -56,7 +57,9 @@ export default function ResourcePage() {
         </div>
 
         {/* Table */}
-        <div className="flex-grow overflow-auto bg-green-900"></div>
+        <div className="flex-grow overflow-auto bg-green-900">
+          <DataGrid />
+        </div>
 
         <div className="flex flex-row-reverse">
           <button className="rounded-md bg-blue-500 px-4 py-2 font-semibold">
