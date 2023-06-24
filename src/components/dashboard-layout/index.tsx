@@ -48,7 +48,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
     <>
       <Head>
         <title>
-          {props.label && `${capitalize(props.label)} | `}UniScheduler
+          {`${props.label ? capitalize(props.label) + " | " : ""}UniScheduler`}
         </title>
       </Head>
 

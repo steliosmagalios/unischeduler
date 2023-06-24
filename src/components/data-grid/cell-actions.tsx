@@ -19,15 +19,15 @@ export default function CellActions(props: CellActionProps) {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex justify-center gap-2">
       <button onClick={() => handleView()}>
-        <span className="material-symbols-outlined">open_in_full</span>
+        <span className="text-sm text-blue-400">View</span>
       </button>
       <button onClick={() => handleEdit()}>
-        <span className="material-symbols-outlined">edit</span>
+        <span className="text-sm text-blue-400">Edit</span>
       </button>
       <button onClick={() => handleDelete()}>
-        <span className="material-symbols-outlined">delete</span>
+        <span className="text-sm text-blue-400">Delete</span>
       </button>
     </div>
   );

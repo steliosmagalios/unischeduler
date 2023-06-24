@@ -4,5 +4,10 @@ type CellCheckboxProps = {
 };
 
 export default function CellCheckbox(props: CellCheckboxProps) {
-  return <input type="checkbox" name="" id="" />;
+  return (
+    <input
+      type="checkbox"
+      className="rounded border-0 text-fuchsia-500 ring-0"
+    />
+  );
 }
