@@ -41,9 +41,6 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
-
-        // IF SOMETHING BREAKS IN THE FUTURE THIS IS THE PROBLEM
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         role: user.role,
       },
     }),
