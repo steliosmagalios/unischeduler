@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import DashboardLayout from "~/components/dashboard-layout";
 import DataGrid from "~/components/data-grid";
 import { getServerAuthSession } from "~/server/auth";
+import { api } from "~/utils/api";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -37,6 +38,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const RESOURCES = ["courses", "groups", "rooms", "users", "timetables"];
 
 export default function ResourcePage() {
+  const context = api.useContext();
+
+  // start fetching
+  api.example.getAll.useQuery();
+
+  const { mutate } = api.example.createItem.useMutation({
+    onSuccess() {
+      void context.example.getAll.invalidate();
+    },
+  });
+
   const router = useRouter();
   const resource = useMemo(
     () => router.query.resource as string,
@@ -46,6 +58,10 @@ export default function ResourcePage() {
   // TODO: Handle case
   if (!RESOURCES.includes(resource)) {
     return <>No Resource</>;
+  }
+
+  function handleTestClick() {
+    mutate();
   }
 
   return (
@@ -59,6 +75,8 @@ export default function ResourcePage() {
         {/* Table */}
         <div className="flex-grow overflow-auto bg-green-900">
           <DataGrid />
+
+          <button onClick={() => void handleTestClick()}>Test</button>
         </div>
 
         <div className="flex flex-row-reverse">

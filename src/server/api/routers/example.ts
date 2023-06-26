@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 export const exampleRouter = createTRPCRouter({
@@ -21,4 +21,18 @@ export const exampleRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+
+  getFirst: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.example.findFirst();
+  }),
+
+  createItem: publicProcedure.mutation(({ ctx }) => {
+    return ctx.prisma.example.create({ data: {} });
+  }),
+
+  remove: publicProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.example.delete({ where: { id: input.id } });
+    }),
 });
