@@ -1,6 +1,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import UserCard from "../user-card";
 import NavLink from "./nav-link";
@@ -43,6 +44,9 @@ const capitalize = (string: string) => {
 
 export default function DashboardLayout(props: DashboardLayoutProps) {
   const { data: session } = useSession();
+  const router = useRouter();
+
+  console.log(router.asPath);
 
   return (
     <>
@@ -58,7 +62,18 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
 
           <nav className="flex flex-grow flex-col gap-2 px-2">
             {navRoutes.map((route) => (
-              <NavLink key={route.href} {...route} />
+              <NavLink
+                key={route.href}
+                {...route}
+                active={(() => {
+                  console.log(
+                    `route: ${router.asPath} - href: ${
+                      route.href
+                    } - eq: ${JSON.stringify(router.asPath === route.href)}`
+                  );
+                  return router.asPath === route.href;
+                })()}
+              />
             ))}
           </nav>
 

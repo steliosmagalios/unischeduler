@@ -8,9 +8,10 @@ type NavLinkProps = {
 };
 
 export default function NavLink(props: NavLinkProps) {
+  console.log(props);
   return (
     <Link
-      data-active={props.active}
+      data-active={!!props.active || undefined} // this is awful, plz fix
       href={props.href}
       className="p-2 data-[active]:border-l-4 data-[active]:border-white data-[active]:bg-neutral-500/50 data-[active]:font-bold"
     >
