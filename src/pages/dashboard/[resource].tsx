@@ -55,17 +55,6 @@ const courseColumns: ColumnDef<Course>[] = [
 ];
 
 export default function ResourcePage() {
-  const context = api.useContext();
-
-  // start fetching
-  const { data: courseData } = api.course.getAll.useQuery();
-
-  const { mutate } = api.example.createItem.useMutation({
-    onSuccess() {
-      void context.example.getAll.invalidate();
-    },
-  });
-
   const router = useRouter();
   const resource = useMemo(
     () => router.query.resource as string,
@@ -77,9 +66,7 @@ export default function ResourcePage() {
     return <>No Resource</>;
   }
 
-  function handleTestClick() {
-    mutate();
-  }
+  const { data: courseData } = api.course.getAll.useQuery();
 
   return (
     <DashboardLayout label={resource}>
@@ -92,8 +79,6 @@ export default function ResourcePage() {
         {/* Table */}
         <div className="flex-grow overflow-auto bg-green-900">
           <DataTable columns={courseColumns} data={courseData ?? []} />
-
-          <button onClick={() => void handleTestClick()}>Test</button>
         </div>
 
         <div className="flex flex-row-reverse">
