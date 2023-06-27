@@ -72,3 +72,58 @@ enum UserRole {
     Professor
     Admin
 }
+
+model Course {
+    id          String    @id @default(cuid())
+    code        String    @unique
+    name        String
+    description String
+    semester    Int       @db.SmallInt
+    lectures    Lecture[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Lecture {
+    id       String   @id @default(cuid())
+    name     String
+    type     RoomType
+    duration Int      @db.SmallInt
+    groups   Group[]
+
+    Course   Course @relation(fields: [courseId], references: [id])
+    courseId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Group {
+    id   String @id @default(cuid())
+    name String
+
+    overlapping  Group[] @relation("OverlappingGroups")
+    overlappedBy Group[] @relation("OverlappingGroups")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Lecture Lecture[]
+}
+
+enum RoomType {
+    Auditorium
+    Laboratory
+}
+
+model Room {
+    id           String   @id @default(cuid())
+    name         String   @unique
+    type         RoomType
+    capacity     Int      @db.Integer
+    availability Int[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

@@ -1,8 +1,10 @@
+import { type Course } from "@prisma/client";
+import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import DashboardLayout from "~/components/dashboard-layout";
-import DataGrid from "~/components/data-grid";
+import { DataTable } from "~/components/data-table";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 
@@ -37,11 +39,26 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const RESOURCES = ["courses", "groups", "rooms", "users", "timetables"];
 
+const courseColumns: ColumnDef<Course>[] = [
+  {
+    accessorKey: "code",
+    header: "Code",
+  },
+  {
+    accessorKey: "name",
+    header: "Title",
+  },
+  {
+    accessorKey: "semester",
+    header: "Semester",
+  },
+];
+
 export default function ResourcePage() {
   const context = api.useContext();
 
   // start fetching
-  api.example.getAll.useQuery();
+  const { data: courseData } = api.course.getAll.useQuery();
 
   const { mutate } = api.example.createItem.useMutation({
     onSuccess() {
@@ -74,7 +91,7 @@ export default function ResourcePage() {
 
         {/* Table */}
         <div className="flex-grow overflow-auto bg-green-900">
-          <DataGrid />
+          <DataTable columns={courseColumns} data={courseData ?? []} />
 
           <button onClick={() => void handleTestClick()}>Test</button>
         </div>

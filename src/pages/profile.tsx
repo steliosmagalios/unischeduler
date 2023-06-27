@@ -31,7 +31,7 @@ const dummyCourse = {
 };
 
 export default function Profile() {
-  const { data: session } = useSession();
+  const { data: session } = useSession(); // TODO: Fetch user's data
 
   return (
     <>
