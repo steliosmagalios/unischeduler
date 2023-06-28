@@ -77,7 +77,7 @@ export default function ResourcePage() {
         </div>
 
         {/* Table */}
-        <div className="flex-grow overflow-auto bg-green-900">
+        <div className="flex-grow overflow-auto">
           <DataTable columns={courseColumns} data={courseData ?? []} />
         </div>
 

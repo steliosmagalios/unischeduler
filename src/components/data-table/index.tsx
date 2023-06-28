@@ -6,25 +6,9 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  MoreHorizontal,
-} from "lucide-react";
-
-import { useEffect, useState } from "react";
-import { Button } from "~/components/ui/button";
+import { useState } from "react";
+import TableNavigation from "~/components/data-table/table-navigation";
 import { Checkbox } from "~/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -33,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import ActionsMenu from "./actions-menu";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,39 +55,11 @@ export function DataTable<TData extends { id: string }, TValue>({
     enableHiding: false,
 
     header: "Actions",
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => void navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <ActionsMenu itemId={row.original.id} />,
   };
 
   const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({ pageSize: 10, pageIndex: 0 });
-
-  useEffect(() => {
-    console.log(rowSelection);
-  }, [rowSelection]);
 
   const table = useReactTable({
     data,
@@ -170,51 +127,7 @@ export function DataTable<TData extends { id: string }, TValue>({
         </Table>
       </div>
 
-      <div className="flex h-12 items-center justify-between border-t px-4 font-medium">
-        <span>{Object.keys(rowSelection).length} Selected</span>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">First page</span>
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className="sr-only">Previous page</span>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="flex h-4 items-center justify-center">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </span>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Next page</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            className="h-8 w-8 p-0"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className="sr-only">Last page</span>
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <TableNavigation table={table} />
     </div>
   );
 }
