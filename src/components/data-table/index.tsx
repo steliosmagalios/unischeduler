@@ -8,7 +8,6 @@ import {
 
 import { useState } from "react";
 import TableNavigation from "~/components/data-table/table-navigation";
-import { Checkbox } from "~/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -28,27 +27,6 @@ export function DataTable<TData extends { id: string }, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const checkboxColumnDef: ColumnDef<TData, TValue> = {
-    id: "checkbox",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    maxSize: 40,
-    enableSorting: false,
-    enableHiding: false,
-  };
-
   const actionsColumnDef: ColumnDef<TData, TValue> = {
     id: "actions",
     enableSorting: false,
@@ -58,18 +36,15 @@ export function DataTable<TData extends { id: string }, TValue>({
     cell: ({ row }) => <ActionsMenu itemId={row.original.id} />,
   };
 
-  const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({ pageSize: 10, pageIndex: 0 });
 
   const table = useReactTable({
     data,
-    columns: [checkboxColumnDef, ...columns, actionsColumnDef],
+    columns: [...columns, actionsColumnDef],
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     state: {
-      rowSelection,
       pagination,
     },
   });
