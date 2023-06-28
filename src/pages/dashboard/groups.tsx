@@ -36,16 +36,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 const columns: ColumnDef<Group>[] = [
   {
-    accessorKey: "code",
-    header: "Code",
-  },
-  {
     accessorKey: "name",
-    header: "Title",
-  },
-  {
-    accessorKey: "semester",
-    header: "Semester",
+    header: "Name",
   },
 ];
 
