@@ -8,7 +8,6 @@ type NavLinkProps = {
 };
 
 export default function NavLink(props: NavLinkProps) {
-  console.log(props);
   return (
     <Link
       data-active={!!props.active || undefined} // this is awful, plz fix

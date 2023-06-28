@@ -46,8 +46,6 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
-  console.log(router.asPath);
-
   return (
     <>
       <Head>
@@ -65,14 +63,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
               <NavLink
                 key={route.href}
                 {...route}
-                active={(() => {
-                  console.log(
-                    `route: ${router.asPath} - href: ${
-                      route.href
-                    } - eq: ${JSON.stringify(router.asPath === route.href)}`
-                  );
-                  return router.asPath === route.href;
-                })()}
+                active={(() => router.asPath === route.href)()}
               />
             ))}
           </nav>
