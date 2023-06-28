@@ -41,11 +41,21 @@ const columns: ColumnDef<Room>[] = [
   },
   {
     accessorKey: "capacity",
-    header: "Capacity",
+    header: () => <span className="flex w-full justify-center">Capacity</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        {row.renderValue("capacity")}
+      </span>
+    ),
   },
   {
     accessorKey: "type",
-    header: "Type",
+    header: () => <span className="flex w-full justify-center">Type</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        {row.renderValue("type")}
+      </span>
+    ),
   },
 ];
 

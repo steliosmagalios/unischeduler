@@ -97,6 +97,7 @@ model Lecture {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    Task      Task[]
 }
 
 model Group {
@@ -123,6 +124,51 @@ model Room {
     type         RoomType
     capacity     Int      @db.Integer
     availability Int[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Task      Task[]
+}
+
+model UserData {
+    id           String @id @default(cuid())
+    firstName    String @db.Text
+    lastName     String @db.Text
+    availability Int[]
+
+    // TODO Enrollments and Groups
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum TimetableSemester {
+    Fall
+    Spring
+}
+
+model Timetable {
+    id       String            @id @default(cuid())
+    name     String
+    semester TimetableSemester
+    dayStart Int               @db.SmallInt
+    dayEnd   Int               @db.SmallInt
+    tasks    Task[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Task {
+    id        String  @id @default(cuid())
+    startTime Int     @db.SmallInt
+    lecture   Lecture @relation(fields: [lectureId], references: [id])
+    lectureId String
+    room      Room    @relation(fields: [roomId], references: [id])
+    roomId    String
+
+    Timetable   Timetable @relation(fields: [timetableId], references: [id])
+    timetableId String
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

@@ -1,4 +1,4 @@
-import { type Course } from "@prisma/client";
+import { type Timetable } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import ResourceLayout from "~/components/resource-layout";
@@ -34,23 +34,34 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const columns: ColumnDef<Course>[] = [
-  {
-    accessorKey: "code",
-    header: "Code",
-  },
+const columns: ColumnDef<Timetable>[] = [
   {
     accessorKey: "name",
-    header: "Title",
+    header: "Name",
+  },
+  {
+    id: "time",
+    header: () => <span className="flex w-full justify-center">Timeslots</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        {row.original.dayStart.toString().padStart(2, "0")}:00 -{" "}
+        {row.original.dayEnd.toString().padStart(2, "0")}:00
+      </span>
+    ),
   },
   {
     accessorKey: "semester",
-    header: "Semester",
+    header: () => <span className="flex w-full justify-center">Semester</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        {row.renderValue("semester")}
+      </span>
+    ),
   },
 ];
 
 export default function TimetablesPage() {
-  const { data } = api.course.getAll.useQuery();
+  const { data } = api.timetable.getAll.useQuery();
 
   return (
     <ResourceLayout label="Timetables" columns={columns} data={data ?? []} />

@@ -45,7 +45,12 @@ const columns: ColumnDef<Course>[] = [
   },
   {
     accessorKey: "semester",
-    header: "Semester",
+    header: () => <span className="flex w-full justify-center">Semester</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        {row.renderValue("semester")}
+      </span>
+    ),
   },
 ];
 

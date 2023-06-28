@@ -32,8 +32,12 @@ export function DataTable<TData extends { id: string }, TValue>({
     enableSorting: false,
     enableHiding: false,
 
-    header: "Actions",
-    cell: ({ row }) => <ActionsMenu itemId={row.original.id} />,
+    header: () => <span className="flex w-full justify-center">Actions</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        <ActionsMenu itemId={row.original.id} />
+      </span>
+    ),
   };
 
   const [pagination, setPagination] = useState({ pageSize: 10, pageIndex: 0 });
