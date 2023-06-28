@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { capitalize } from "~/utils/lib";
 import UserCard from "../user-card";
 import NavLink from "./nav-link";
 
@@ -37,10 +38,6 @@ const navRoutes = [
     label: "Timetables",
   },
 ];
-
-const capitalize = (string: string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
 
 export default function DashboardLayout(props: DashboardLayoutProps) {
   const { data: session } = useSession();

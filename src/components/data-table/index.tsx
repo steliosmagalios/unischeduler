@@ -18,7 +18,7 @@ import {
 } from "~/components/ui/table";
 import ActionsMenu from "./actions-menu";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
