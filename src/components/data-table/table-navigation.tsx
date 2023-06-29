@@ -36,8 +36,11 @@ export default function TableNavigation<TData>(
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <span className="flex h-4 items-center justify-center">
-        Page {props.table.getState().pagination.pageIndex + 1} of{" "}
-        {props.table.getPageCount()}
+        Page{" "}
+        {props.table.getPageCount() > 0
+          ? props.table.getState().pagination.pageIndex + 1
+          : 0}{" "}
+        of {props.table.getPageCount()}
       </span>
       <Button
         variant="outline"
