@@ -1,4 +1,4 @@
-import { type Course } from "@prisma/client";
+import { UserData } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import ResourceLayout from "~/components/resource-layout";
@@ -34,23 +34,23 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const columns: ColumnDef<Course>[] = [
+const columns: ColumnDef<UserData>[] = [
   {
-    accessorKey: "code",
-    header: "Code",
+    accessorKey: "email",
+    header: "Email",
   },
   {
-    accessorKey: "name",
-    header: "Title",
+    accessorKey: "firstName",
+    header: "First Name",
   },
   {
-    accessorKey: "semester",
-    header: "Semester",
+    accessorKey: "lastName",
+    header: "Last Name",
   },
 ];
 
 export default function UsersPage() {
-  const { data } = api.course.getAll.useQuery();
+  const { data } = api.user.getAll.useQuery();
 
   return <ResourceLayout label="Users" columns={columns} data={data ?? []} />;
 }
