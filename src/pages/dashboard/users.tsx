@@ -3,9 +3,9 @@ import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import ResourceLayout from "~/components/resource-layout";
+import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
 
@@ -13,6 +13,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const record = await prisma.user.findUnique({
+    where: { externalId: userId },
+  });
+
+  if (record === null || record.role !== "Admin") {
+    return {
+      redirect: {
+        destination: "/profile",
         permanent: false,
       },
     };

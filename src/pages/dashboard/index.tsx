@@ -2,8 +2,8 @@ import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import DashboardLayout from "~/components/dashboard-layout";
 import Timetable from "~/components/timetable";
+import { prisma } from "~/server/db";
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { userId } = getAuth(ctx.req);
 
@@ -11,6 +11,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  const record = await prisma.user.findUnique({
+    where: { externalId: userId },
+  });
+
+  if (record === null || record.role !== "Admin") {
+    return {
+      redirect: {
+        destination: "/profile",
         permanent: false,
       },
     };
