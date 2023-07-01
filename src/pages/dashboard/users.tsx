@@ -49,6 +49,17 @@ const columns: ColumnDef<User>[] = [
     accessorKey: "lastName",
     header: "Last Name",
   },
+  {
+    accessorKey: "role",
+    header: () => <span className="flex w-full justify-center">Role</span>,
+    cell: ({ row }) => (
+      <span className="flex w-full justify-center">
+        <span className="rounded-full bg-green-500 px-3 py-1 font-semibold">
+          {row.renderValue("role")}
+        </span>
+      </span>
+    ),
+  },
 ];
 
 export default function UsersPage({ userId }: { userId: string }) {
