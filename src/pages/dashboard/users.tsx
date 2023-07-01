@@ -1,4 +1,4 @@
-import { UserData } from "@prisma/client";
+import { User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import ResourceLayout from "~/components/resource-layout";
@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const columns: ColumnDef<UserData>[] = [
+const columns: ColumnDef<User>[] = [
   {
     accessorKey: "email",
     header: "Email",

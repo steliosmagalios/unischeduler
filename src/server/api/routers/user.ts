@@ -10,7 +10,7 @@ export const userRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string().cuid() }))
     .query(async ({ ctx, input }) => {
-      const item = await ctx.prisma.userData.findUnique({
+      const item = await ctx.prisma.user.findUnique({
         where: { id: input.id },
       });
 
@@ -25,7 +25,7 @@ export const userRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.userData.findMany();
+    return ctx.prisma.user.findMany();
   }),
 
   create: adminOnlyProcedure.query(() => {
@@ -44,7 +44,7 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ id: z.string().cuid() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        return await ctx.prisma.userData.delete({ where: { id: input.id } });
+        return await ctx.prisma.user.delete({ where: { id: input.id } });
       } catch {
         throw new TRPCError({
           code: "NOT_FOUND",
