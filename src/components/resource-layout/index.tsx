@@ -15,13 +15,14 @@ import { capitalize } from "~/utils/lib";
 
 type ResourceLayoutProps<TData extends { id: string }, TType> = {
   label: string;
+  userId: string;
 } & DataTableProps<TData, TType>;
 
 export default function ResourceLayout<TData extends { id: string }, TType>(
   props: ResourceLayoutProps<TData, TType>
 ) {
   return (
-    <DashboardLayout label={props.label}>
+    <DashboardLayout userId={props.userId} label={props.label}>
       <div className="flex h-full flex-col gap-2 overflow-hidden">
         <div>
           <h2 className="text-3xl font-semibold capitalize">

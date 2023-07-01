@@ -1,13 +1,13 @@
+import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import DashboardLayout from "~/components/dashboard-layout";
 import Timetable from "~/components/timetable";
-import { getServerAuthSession } from "~/server/auth";
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
+  const { userId } = getAuth(ctx.req);
 
-  // Check for authenticated user
-  if (session === null) {
+  if (userId === null) {
     return {
       redirect: {
         destination: "/",
@@ -16,19 +16,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  // Only admins can enter
-  // TODO: Add toasts to other pages
-  if (session.user.role !== "Admin") {
-    return {
-      redirect: {
-        destination: "/profile",
-        permanent: false,
-      },
-    };
-  }
-
   return {
-    props: { session },
+    props: { userId, ...buildClerkProps(ctx.req) },
   };
 };
 
@@ -40,9 +29,9 @@ const dummyResources: Record<string, number> = {
   timetables: 1,
 };
 
-export default function DashboardHome() {
+export default function DashboardHome({ userId }: { userId: string }) {
   return (
-    <DashboardLayout label="Dashboard">
+    <DashboardLayout label="Dashboard" userId={userId}>
       <div className="flex flex-col gap-4">
         <div>
           <h2 className="text-3xl font-semibold">Available Resources</h2>

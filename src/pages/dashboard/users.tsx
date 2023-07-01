@@ -1,15 +1,15 @@
-import { User } from "@prisma/client";
+import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
+import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import ResourceLayout from "~/components/resource-layout";
-import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
+  const { userId } = getAuth(ctx.req);
 
-  // Check for authenticated user
-  if (session === null) {
+  if (userId === null) {
     return {
       redirect: {
         destination: "/",
@@ -18,19 +18,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  // Only admins can enter
-  // TODO: Add toasts to other pages
-  if (session.user.role !== "Admin") {
-    return {
-      redirect: {
-        destination: "/profile",
-        permanent: false,
-      },
-    };
-  }
-
   return {
-    props: { session },
+    props: { userId, ...buildClerkProps(ctx.req) },
   };
 };
 
@@ -49,8 +38,15 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
-export default function UsersPage() {
+export default function UsersPage({ userId }: { userId: string }) {
   const { data } = api.user.getAll.useQuery();
 
-  return <ResourceLayout label="Users" columns={columns} data={data ?? []} />;
+  return (
+    <ResourceLayout
+      userId={userId}
+      label="Users"
+      columns={columns}
+      data={data ?? []}
+    />
+  );
 }

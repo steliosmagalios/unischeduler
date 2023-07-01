@@ -1,8 +1,9 @@
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { api } from "~/utils/api";
 import { capitalize } from "~/utils/lib";
 import UserCard from "../user-card";
 import NavLink from "./nav-link";
@@ -10,6 +11,7 @@ import NavLink from "./nav-link";
 type DashboardLayoutProps = {
   label?: string;
   children: React.ReactNode;
+  userId: string;
 };
 
 const navRoutes = [
@@ -40,8 +42,14 @@ const navRoutes = [
 ];
 
 export default function DashboardLayout(props: DashboardLayoutProps) {
-  const { data: session } = useSession();
+  const { data: userData, isLoading: isUserLoading } = api.user.get.useQuery({
+    id: props.userId,
+  });
   const router = useRouter();
+
+  if (isUserLoading || userData === undefined) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -66,7 +74,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
           </nav>
 
           <div>
-            <UserCard session={session} />
+            <UserCard user={userData} />
             <div className="flex justify-evenly gap-2">
               <Link href="/profile" className="text-blue-500">
                 Profile
