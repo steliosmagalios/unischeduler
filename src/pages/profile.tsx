@@ -51,7 +51,7 @@ export default function Profile({ userId }: { userId: string }) {
 
       <div className="flex h-screen flex-col gap-4 overflow-hidden pb-4">
         <header className="h-14 border-b">
-          <div className="container mx-auto flex h-full items-center justify-between px-24">
+          <div className="container mx-auto flex h-full items-center justify-between">
             <h1 className="text-4xl font-bold">UniScheduler</h1>
 
             <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export default function Profile({ userId }: { userId: string }) {
           </div>
         </header>
 
-        <main className="container mx-auto grid h-full flex-grow grid-cols-12 gap-4 overflow-hidden px-24">
+        <main className="container mx-auto grid h-full flex-grow grid-cols-12 gap-4 overflow-hidden">
           {/* User card and daily schedule */}
           <div className="col-span-3 flex h-full flex-col gap-4 overflow-hidden">
             {/* User card */}
