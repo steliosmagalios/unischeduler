@@ -8,10 +8,10 @@ import {
 
 export const userRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.user.findUnique({
-        where: { id: input.id },
+        where: { externalId: input.id },
       });
 
       if (item === null) {
