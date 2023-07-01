@@ -1,7 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
-import { signIn } from "next-auth/react";
 import Head from "next/head";
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -23,10 +22,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default function Home() {
-  function handleLogin() {
-    void signIn("google");
-  }
-
   return (
     <>
       <Head>
@@ -47,12 +42,6 @@ export default function Home() {
         {/* Login */}
         <div className="flex justify-center">
           <SignIn />
-          <button
-            onClick={handleLogin}
-            className="rounded-lg bg-red-600 px-4 py-3"
-          >
-            Login with <span className="font-semibold">Google Account</span>
-          </button>
         </div>
       </main>
     </>
