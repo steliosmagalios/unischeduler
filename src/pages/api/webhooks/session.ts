@@ -1,8 +1,7 @@
 import type { NextApiResponse } from "next";
 import { env } from "~/env.mjs";
-import createUser from "~/utils/webhooks/hooks/create-user";
-import updateUser from "~/utils/webhooks/hooks/update-user";
-import { type UserData } from "~/utils/webhooks/types";
+import checkAndLinkUser from "~/utils/webhooks/hooks/check-and-link-user";
+import { type SessionData } from "~/utils/webhooks/types";
 import {
   verifyClerkMessage,
   type NextApiRequestWithSvixRequiredHeaders,
@@ -14,17 +13,18 @@ export const config = {
   },
 };
 
-const webhookSecret: string = env.CLERK_WEBHOOK_SECRET_USER;
+const webhookSecret: string = env.CLERK_WEBHOOK_SECRET_SESSION;
 
-// User hook
+// session webhook
+// this is terrible im sososososo sorry
 export default async function handler(
   req: NextApiRequestWithSvixRequiredHeaders,
   res: NextApiResponse
 ) {
   // Verify hook
-  let e: UserEvent | null = null;
+  let e: SessionEvent | null = null;
   try {
-    e = await verifyClerkMessage<UserEvent>(req, webhookSecret);
+    e = await verifyClerkMessage<SessionEvent>(req, webhookSecret);
   } catch {
     return e;
   }
@@ -35,21 +35,18 @@ export default async function handler(
 
   let result = true;
   switch (e.type) {
-    case "user.created":
-      result = await createUser(e.data);
-      break;
-    case "user.updated":
-      result = await updateUser(e.data);
+    case "session.created":
+      result = await checkAndLinkUser(e.data);
       break;
   }
 
   res.status(result ? 200 : 500).json({});
 }
 
-type UserEvent = {
-  data: UserData;
+type SessionEvent = {
+  data: SessionData;
   object: "event";
   type: EventType;
 };
 
-type EventType = "user.created" | "user.updated" | "*";
+type EventType = "user.created" | "user.updated" | "session.created" | "*";

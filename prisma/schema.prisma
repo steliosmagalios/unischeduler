@@ -17,11 +17,12 @@ datasource db {
 
 model User {
     id           String   @id @default(cuid())
-    firstName    String
-    lastName     String
+    externalId   String?  @unique
+    firstName    String?
+    lastName     String?
     email        String   @unique
-    role         UserRole @default(User)
     imageUrl     String?
+    role         UserRole @default(User)
     availability Int[]
 
     // Setup enrollment and groups
