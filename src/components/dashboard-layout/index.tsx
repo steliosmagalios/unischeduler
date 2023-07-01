@@ -1,4 +1,4 @@
-import { signOut } from "next-auth/react";
+import { SignOutButton } from "@clerk/nextjs";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -79,9 +79,9 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
               <Link href="/profile" className="text-blue-500">
                 Profile
               </Link>
-              <button onClick={() => void signOut()} className="text-red-500">
-                Logout
-              </button>
+              <span className="text-red-500">
+                <SignOutButton />
+              </span>
             </div>
           </div>
         </aside>
