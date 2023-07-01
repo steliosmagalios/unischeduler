@@ -1,15 +1,31 @@
+import { SignOutButton } from "@clerk/nextjs";
+import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
-import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
-import Link from "next/link";
 import Timetable from "~/components/timetable";
-import UserCard from "~/components/user-card";
-import { getServerAuthSession } from "~/server/auth";
 
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const session = await getServerAuthSession(ctx);
+
+//   if (session === null) {
+//     return {
+//       redirect: {
+//         destination: "/",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   return {
+//     props: { session },
+//   };
+// };
+
+// eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
+  const { userId } = getAuth(ctx.req);
 
-  if (session === null) {
+  if (userId === null) {
     return {
       redirect: {
         destination: "/",
@@ -18,8 +34,24 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
+  // const { userId } = getAuth(ctx.req);
+  // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  // const user = await clerkClient.users.getUser(userId!);
+
+  // console.log();
+  // user.publicMetadata.courses = [];
+
+  // // Check if user has a row in the database
+
+  // // If not, create one
+
+  // // If yes, fetch the row
+
+  console.log(userId);
+
   return {
-    props: { session },
+    props: { ...buildClerkProps(ctx.req) },
   };
 };
 
@@ -31,7 +63,7 @@ const dummyCourse = {
 };
 
 export default function Profile() {
-  const { data: session } = useSession(); // TODO: Fetch user's data
+  // const { data: session } = useSession(); // TODO: Fetch user's data
 
   return (
     <>
@@ -47,17 +79,19 @@ export default function Profile() {
             <h1 className="text-4xl font-bold">UniScheduler</h1>
 
             <div className="flex items-center gap-2">
-              {session?.user.role === "Admin" && (
+              <span>goto dash</span>
+              {/* {session?.user.role === "Admin" && (
                 <Link className="font-semibold text-teal-300" href="/dashboard">
                   Go to Dashboard
                 </Link>
-              )}
-              <button
+              )} */}
+              <SignOutButton />
+              {/* <button
                 className="rounded-md bg-red-500 px-3 py-2 font-semibold"
                 onClick={() => void signOut()}
               >
                 Sign Out
-              </button>
+              </button> */}
             </div>
           </div>
         </header>
@@ -66,7 +100,8 @@ export default function Profile() {
           {/* User card and daily schedule */}
           <div className="col-span-3 flex h-full flex-col gap-4 overflow-hidden">
             {/* User card */}
-            <UserCard session={session} />
+            {/* <UserCard session={session} /> */}
+            <span>user card</span>
 
             {/* Daily schedule */}
             <div className="flex flex-grow flex-col gap-2 overflow-hidden">
