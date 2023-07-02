@@ -1,13 +1,13 @@
-import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
+import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import DashboardLayout from "~/components/dashboard-layout";
 import Timetable from "~/components/timetable";
-import { prisma } from "~/server/db";
+import getCurrentUser from "~/utils/get-current-user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { userId } = getAuth(ctx.req);
+  const user = await getCurrentUser(ctx);
 
-  if (userId === null) {
+  if (user === null) {
     return {
       redirect: {
         destination: "/",
@@ -16,11 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const record = await prisma.user.findUnique({
-    where: { externalId: userId },
-  });
-
-  if (record === null || record.role !== "Admin") {
+  if (user.role !== "Admin") {
     return {
       redirect: {
         destination: "/profile",
@@ -30,7 +26,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: { userId, ...buildClerkProps(ctx.req) },
+    // Visit this in the future
+    props: { userId: user.externalId, ...buildClerkProps(ctx.req) },
   };
 };
 

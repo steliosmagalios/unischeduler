@@ -1,17 +1,18 @@
 import { SignOutButton } from "@clerk/nextjs";
-import { buildClerkProps, getAuth } from "@clerk/nextjs/server";
+import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Timetable from "~/components/timetable";
 import UserCard from "~/components/user-card";
 import { api } from "~/utils/api";
+import getCurrentUser from "~/utils/get-current-user";
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { userId } = getAuth(ctx.req);
+  const user = await getCurrentUser(ctx);
 
-  if (userId === null) {
+  if (user === null) {
     return {
       redirect: {
         destination: "/",
@@ -21,7 +22,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: { userId, ...buildClerkProps(ctx.req) },
+    // Visit this in the future
+    props: { userId: user.externalId, ...buildClerkProps(ctx.req) },
   };
 };
 
