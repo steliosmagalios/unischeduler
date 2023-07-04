@@ -1,4 +1,11 @@
 import { useEnumValues, useTsController } from "@ts-react/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 export default function SelectInput() {
   const { field, error } = useTsController<string>();
@@ -6,18 +13,21 @@ export default function SelectInput() {
 
   return (
     <>
-      <select
+      <Select
         value={field.value ? field.value : ""}
-        onChange={(e) => {
-          field.onChange(e.target.value);
-        }}
+        onValueChange={field.onChange}
       >
-        {items.map((item) => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger>
+          <SelectValue placeholder={field.name} />
+        </SelectTrigger>
+        <SelectContent>
+          {items.map((item) => (
+            <SelectItem key={item} value={item}>
+              {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       {error?.errorMessage && <span>{error?.errorMessage}</span>}{" "}
     </>
   );

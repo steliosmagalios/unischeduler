@@ -36,11 +36,16 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
           <DialogTitle>Create {props.label}</DialogTitle>
         </DialogHeader>
 
-        <CreateForm schema={props.schema} onSubmit={props.onSubmit} />
-
-        <DialogFooter>
-          <Button type="submit">Create</Button>
-        </DialogFooter>
+        <CreateForm
+          schema={props.schema}
+          onSubmit={props.onSubmit}
+          // i don't like this
+          renderAfter={() => (
+            <DialogFooter className="mt-4">
+              <Button type="submit">Create</Button>
+            </DialogFooter>
+          )}
+        />
       </DialogContent>
     </Dialog>
   );
