@@ -46,11 +46,15 @@ const schema = z.object({
 });
 
 export default function GroupsPage({ userId }: { userId: string }) {
+  const context = api.useContext();
   const { data } = api.group.getAll.useQuery();
-  const { mutate } = api.group.create.useMutation();
+  const { mutate } = api.group.create.useMutation({
+    onSuccess() {
+      void context.group.getAll.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log("here");
     mutate(values);
   }
 
