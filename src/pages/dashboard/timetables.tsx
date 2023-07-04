@@ -2,6 +2,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Timetable } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
+import { z } from "zod";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -59,8 +60,21 @@ const columns: ColumnDef<Timetable>[] = [
   },
 ];
 
+const schema = z
+  .object({
+    name: z.string().nonempty(),
+    semester: z.enum(["Fall", "Spring"]),
+    startTime: z.number().min(0).max(23),
+    endTime: z.number().min(0).max(23),
+  })
+  .refine((data) => data.startTime < data.endTime);
+
 export default function TimetablesPage({ userId }: { userId: string }) {
   const { data } = api.timetable.getAll.useQuery();
+
+  function onSubmit(values: z.infer<typeof schema>) {
+    console.log(values);
+  }
 
   return (
     <ResourceLayout
@@ -68,6 +82,8 @@ export default function TimetablesPage({ userId }: { userId: string }) {
       label="Timetables"
       columns={columns}
       data={data ?? []}
+      onSubmit={onSubmit}
+      schema={schema}
     />
   );
 }

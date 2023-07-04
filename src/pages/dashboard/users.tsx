@@ -2,6 +2,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
+import { z } from "zod";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -59,8 +60,20 @@ const columns: ColumnDef<User>[] = [
   },
 ];
 
+const schema = z.object({
+  name: z.string().nonempty(),
+  email: z.string().email().nonempty(),
+  firstName: z.string().nonempty(),
+  lastName: z.string().nonempty(),
+  role: z.enum(["Admin", "Professor", "User"]), // Sync with prisma type
+});
+
 export default function UsersPage({ userId }: { userId: string }) {
   const { data } = api.user.getAll.useQuery();
+
+  function onSubmit(values: z.infer<typeof schema>) {
+    console.log(values);
+  }
 
   return (
     <ResourceLayout
@@ -68,6 +81,8 @@ export default function UsersPage({ userId }: { userId: string }) {
       label="Users"
       columns={columns}
       data={data ?? []}
+      onSubmit={onSubmit}
+      schema={schema}
     />
   );
 }

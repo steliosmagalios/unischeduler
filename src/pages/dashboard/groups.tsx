@@ -2,6 +2,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Group } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
+import { z } from "zod";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -40,8 +41,16 @@ const columns: ColumnDef<Group>[] = [
   },
 ];
 
+const schema = z.object({
+  name: z.string().nonempty(),
+});
+
 export default function GroupsPage({ userId }: { userId: string }) {
   const { data } = api.group.getAll.useQuery();
+
+  function onSubmit(values: z.infer<typeof schema>) {
+    console.log(values);
+  }
 
   return (
     <ResourceLayout
@@ -49,6 +58,8 @@ export default function GroupsPage({ userId }: { userId: string }) {
       label="Groups"
       columns={columns}
       data={data ?? []}
+      schema={schema}
+      onSubmit={onSubmit}
     />
   );
 }
