@@ -3,6 +3,7 @@ import type {
   RTFFormSchemaType,
   RTFFormSubmitFn,
 } from "@ts-react/form/lib/src/createSchemaForm";
+import { useState } from "react";
 import { z } from "zod";
 import NumberInput from "~/components/form/input-number";
 import SelectInput from "~/components/form/input-select";
@@ -25,10 +26,20 @@ type CreateResourceDialogProps = {
 };
 
 export default function CreateResourceDialog(props: CreateResourceDialogProps) {
+  const [open, setOpen] = useState(false);
+
+  async function onSubmit(values: z.infer<typeof props.schema>) {
+    await props.onSubmit(values);
+    setOpen(false);
+  }
+
   return (
-    <Dialog modal>
+    <Dialog modal open={open}>
       <DialogTrigger asChild>
-        <Button className="rounded-md bg-blue-500 px-4 py-2 font-semibold">
+        <Button
+          className="rounded-md bg-blue-500 px-4 py-2 font-semibold"
+          onClick={() => setOpen(true)}
+        >
           Create
         </Button>
       </DialogTrigger>
@@ -39,7 +50,7 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
 
         <CreateForm
           schema={props.schema}
-          onSubmit={props.onSubmit}
+          onSubmit={onSubmit}
           // i don't like this
           renderAfter={() => (
             <DialogFooter className="mt-4">
