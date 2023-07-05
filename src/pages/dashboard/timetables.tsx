@@ -64,19 +64,25 @@ const schema = z
   .object({
     name: z.string().nonempty().describe("Name // Name of the timetable"),
     semester: z.enum(["Fall", "Spring"]).describe("Semester // Semester"),
-    startTime: z.number().min(0).max(23).describe("Start Time // Start time"),
-    endTime: z.number().min(0).max(23).describe("End Time // End time"),
+    dayStart: z.number().min(0).max(23).describe("Start Time // Start time"),
+    dayEnd: z.number().min(0).max(23).describe("End Time // End time"),
   })
   .refine(
-    (data) => data.startTime < data.endTime,
+    (data) => data.dayStart < data.dayEnd,
     "Start time must be before end time"
   );
 
 export default function TimetablesPage({ userId }: { userId: string }) {
+  const context = api.useContext();
   const { data } = api.timetable.getAll.useQuery();
+  const { mutate } = api.timetable.create.useMutation({
+    onSuccess() {
+      void context.timetable.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (

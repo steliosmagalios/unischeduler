@@ -6,6 +6,13 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+const baseTimetableSchema = z.object({
+  name: z.string(),
+  dayStart: z.number(),
+  dayEnd: z.number(),
+  semester: z.enum(["Fall", "Spring"]),
+});
+
 export const timetableRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string().cuid() }))
@@ -28,11 +35,18 @@ export const timetableRouter = createTRPCRouter({
     return ctx.prisma.timetable.findMany();
   }),
 
-  create: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  create: adminOnlyProcedure
+    .input(baseTimetableSchema)
+    .mutation(({ ctx, input }) => {
+      try {
+        return ctx.prisma.timetable.create({ data: input });
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Timetable could not be created.",
+        });
+      }
+    }),
 
   update: adminOnlyProcedure.query(() => {
     throw new TRPCError({

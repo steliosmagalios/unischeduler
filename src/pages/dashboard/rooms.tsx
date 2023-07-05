@@ -71,10 +71,16 @@ const schema = z.object({
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {
+  const context = api.useContext();
   const { data } = api.room.getAll.useQuery();
+  const { mutate } = api.room.create.useMutation({
+    onSuccess() {
+      void context.room.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (

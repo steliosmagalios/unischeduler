@@ -6,6 +6,12 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+const baseRoomSchema = z.object({
+  name: z.string(),
+  capacity: z.number(),
+  type: z.enum(["Auditorium", "Laboratory"]),
+});
+
 export const roomRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string().cuid() }))
@@ -28,11 +34,18 @@ export const roomRouter = createTRPCRouter({
     return ctx.prisma.room.findMany();
   }),
 
-  create: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  create: adminOnlyProcedure
+    .input(baseRoomSchema)
+    .mutation(({ ctx, input }) => {
+      try {
+        return ctx.prisma.room.create({ data: input });
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Room could not be created.",
+        });
+      }
+    }),
 
   update: adminOnlyProcedure.query(() => {
     throw new TRPCError({

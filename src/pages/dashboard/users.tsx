@@ -70,10 +70,16 @@ const schema = z.object({
 });
 
 export default function UsersPage({ userId }: { userId: string }) {
+  const context = api.useContext();
   const { data } = api.user.getAll.useQuery();
+  const { mutate } = api.user.create.useMutation({
+    onSuccess() {
+      void context.user.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    mutate(values);
   }
 
   return (
