@@ -4,6 +4,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
 import ResourceLayout from "~/components/resource-layout";
+import { TextAreaSchema } from "~/components/resource-layout/create-resource-dialog";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -55,17 +56,25 @@ const columns: ColumnDef<Course>[] = [
 ];
 
 const schema = z.object({
-  code: z.string().nonempty(),
-  name: z.string().nonempty(),
-  semester: z.number().min(0).max(8),
-  description: z.string(),
+  code: z.string().nonempty().describe("Code // Course code"),
+  name: z.string().nonempty().describe("Name // Name of the course"),
+  semester: z.number().min(0).max(8).describe("Semester // Enter the semester"),
+  description: TextAreaSchema.describe(
+    "Description // Description of the course"
+  ).optional(),
 });
 
 export default function CoursesPage({ userId }: { userId: string }) {
+  const context = api.useContext();
   const { data } = api.course.getAll.useQuery();
+  const { mutate } = api.course.create.useMutation({
+    onSuccess() {
+      void context.course.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
-    console.log(values);
+    mutate({ ...values, description: values.description ?? "" }); // TODO: Check if there is a better way for description
   }
 
   return (

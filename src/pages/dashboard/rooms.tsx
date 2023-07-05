@@ -60,9 +60,14 @@ const columns: ColumnDef<Room>[] = [
 ];
 
 const schema = z.object({
-  name: z.string().nonempty(),
-  capacity: z.number().min(0),
-  type: z.enum(["Auditorium", "Laboratory"]), // Somehow, sync this with prisma type
+  name: z.string().nonempty().describe("Name // Name of the room"),
+  capacity: z
+    .number()
+    .min(1, "Room capacity must be at least 1")
+    .describe("Capacity // Capacity of the room"),
+  type: z
+    .enum(["Auditorium", "Laboratory"])
+    .describe("Type // Select the room's type"), // Somehow, sync this with prisma type
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {

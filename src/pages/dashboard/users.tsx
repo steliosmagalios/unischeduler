@@ -61,11 +61,12 @@ const columns: ColumnDef<User>[] = [
 ];
 
 const schema = z.object({
-  name: z.string().nonempty(),
-  email: z.string().email().nonempty(),
-  firstName: z.string().nonempty(),
-  lastName: z.string().nonempty(),
-  role: z.enum(["Admin", "Professor", "User"]), // Sync with prisma type
+  email: z.string().email().nonempty().describe("Email // User's email"),
+  firstName: z.string().nonempty().describe("First Name // User's first name"),
+  lastName: z.string().nonempty().describe("Last Name // User's last name"),
+  role: z
+    .enum(["Admin", "Professor", "User"])
+    .describe("Role // The user's role"), // Sync with prisma type
 });
 
 export default function UsersPage({ userId }: { userId: string }) {

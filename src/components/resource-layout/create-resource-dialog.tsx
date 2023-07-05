@@ -1,4 +1,4 @@
-import { createTsForm } from "@ts-react/form";
+import { createTsForm, createUniqueFieldSchema } from "@ts-react/form";
 import type {
   RTFFormSchemaType,
   RTFFormSubmitFn,
@@ -7,6 +7,7 @@ import { z } from "zod";
 import NumberInput from "~/components/form/input-number";
 import SelectInput from "~/components/form/input-select";
 import TextInput from "~/components/form/input-text";
+import TextAreaInput from "~/components/form/input-textarea";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -51,8 +52,11 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
   );
 }
 
+export const TextAreaSchema = createUniqueFieldSchema(z.string(), "textarea");
+
 const mapping = [
   [z.string(), TextInput] as const,
+  [TextAreaSchema, TextAreaInput] as const,
   [z.number(), NumberInput] as const,
   [z.enum([""]), SelectInput] as const,
 ] as const;

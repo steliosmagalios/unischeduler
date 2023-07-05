@@ -42,7 +42,7 @@ const columns: ColumnDef<Group>[] = [
 ];
 
 const schema = z.object({
-  name: z.string().nonempty(),
+  name: z.string().nonempty().describe("Name // Name of the group"),
 });
 
 export default function GroupsPage({ userId }: { userId: string }) {

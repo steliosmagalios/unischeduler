@@ -6,6 +6,13 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+const baseCourseSchema = z.object({
+  code: z.string(),
+  name: z.string(),
+  semester: z.number().min(0).max(8),
+  description: z.string(),
+});
+
 export const courseRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.string().cuid() }))
@@ -28,11 +35,18 @@ export const courseRouter = createTRPCRouter({
     return ctx.prisma.course.findMany();
   }),
 
-  create: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  create: adminOnlyProcedure
+    .input(baseCourseSchema)
+    .mutation(({ ctx, input }) => {
+      try {
+        return ctx.prisma.course.create({ data: input });
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Course could not be created.",
+        });
+      }
+    }),
 
   update: adminOnlyProcedure.query(() => {
     throw new TRPCError({

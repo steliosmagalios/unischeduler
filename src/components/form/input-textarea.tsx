@@ -8,9 +8,9 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import { Textarea } from "~/components/ui/textarea";
 
-export default function TextInput() {
+export default function TextAreaInput() {
   const ctx = useFormContext();
   const { field } = useTsController<string>();
   const { label, placeholder } = useDescription();
@@ -23,8 +23,7 @@ export default function TextInput() {
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input
-              type="text"
+            <Textarea
               placeholder={placeholder}
               value={field.value ? field.value : ""}
               onChange={(e) => field.onChange(e.target.value)}

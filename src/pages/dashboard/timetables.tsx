@@ -62,12 +62,15 @@ const columns: ColumnDef<Timetable>[] = [
 
 const schema = z
   .object({
-    name: z.string().nonempty(),
-    semester: z.enum(["Fall", "Spring"]),
-    startTime: z.number().min(0).max(23),
-    endTime: z.number().min(0).max(23),
+    name: z.string().nonempty().describe("Name // Name of the timetable"),
+    semester: z.enum(["Fall", "Spring"]).describe("Semester // Semester"),
+    startTime: z.number().min(0).max(23).describe("Start Time // Start time"),
+    endTime: z.number().min(0).max(23).describe("End Time // End time"),
   })
-  .refine((data) => data.startTime < data.endTime);
+  .refine(
+    (data) => data.startTime < data.endTime,
+    "Start time must be before end time"
+  );
 
 export default function TimetablesPage({ userId }: { userId: string }) {
   const { data } = api.timetable.getAll.useQuery();
