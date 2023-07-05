@@ -38,12 +38,11 @@ enum UserRole {
 }
 
 model Course {
-    id          String    @id @default(cuid())
-    code        String    @unique
-    name        String
-    description String
-    semester    Int       @db.SmallInt
-    lectures    Lecture[]
+    id       String    @id @default(cuid())
+    code     String    @unique
+    name     String
+    semester Int       @db.SmallInt
+    lectures Lecture[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

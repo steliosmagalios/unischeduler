@@ -34,7 +34,7 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
   }
 
   return (
-    <Dialog modal open={open}>
+    <Dialog modal open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           className="rounded-md bg-blue-500 px-4 py-2 font-semibold"
@@ -43,7 +43,7 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
           Create
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Create {props.label}</DialogTitle>
         </DialogHeader>

@@ -10,7 +10,6 @@ const baseCourseSchema = z.object({
   code: z.string(),
   name: z.string(),
   semester: z.number().min(0).max(8),
-  description: z.string(),
 });
 
 export const courseRouter = createTRPCRouter({
