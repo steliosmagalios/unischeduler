@@ -86,10 +86,8 @@ export default function UsersPage({ userId }: { userId: string }) {
     <ResourceLayout
       userId={userId}
       label="Users"
-      columns={columns}
-      data={data ?? []}
-      onSubmit={onSubmit}
-      schema={schema}
+      tableProps={{ columns, data: data ?? [] }}
+      formProps={{ schema, onSubmit }}
     />
   );
 }

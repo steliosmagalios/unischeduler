@@ -62,10 +62,8 @@ export default function GroupsPage({ userId }: { userId: string }) {
     <ResourceLayout
       userId={userId}
       label="Groups"
-      columns={columns}
-      data={data ?? []}
-      schema={schema}
-      onSubmit={onSubmit}
+      tableProps={{ columns, data: data ?? [] }}
+      formProps={{ schema, onSubmit }}
     />
   );
 }

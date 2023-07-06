@@ -1,18 +1,17 @@
-import type {
-  RTFFormSchemaType,
-  RTFFormSubmitFn,
-} from "@ts-react/form/lib/src/createSchemaForm";
 import DashboardLayout from "~/components/dashboard-layout";
 import { DataTable, type DataTableProps } from "~/components/data-table";
-import CreateResourceDialog from "~/components/resource-layout/create-resource-dialog";
+import CreateResourceDialog, {
+  type CreateResourceDialogProps,
+} from "~/components/resource-layout/create-resource-dialog";
 import { capitalize } from "~/utils/lib";
 
 type ResourceLayoutProps<TData extends { id: string }, TType> = {
   label: string;
   userId: string;
-  schema: RTFFormSchemaType;
-  onSubmit: RTFFormSubmitFn<RTFFormSchemaType>;
-} & DataTableProps<TData, TType>;
+
+  tableProps: DataTableProps<TData, TType>;
+  formProps: Omit<CreateResourceDialogProps, "label">;
+};
 
 export default function ResourceLayout<TData extends { id: string }, TType>(
   props: ResourceLayoutProps<TData, TType>
@@ -29,15 +28,11 @@ export default function ResourceLayout<TData extends { id: string }, TType>(
 
         {/* Table */}
         <div className="flex-grow overflow-auto">
-          <DataTable columns={props.columns} data={props.data} />
+          <DataTable {...props.tableProps} />
         </div>
 
         <div className="flex flex-row-reverse">
-          <CreateResourceDialog
-            label={props.label}
-            schema={props.schema}
-            onSubmit={props.onSubmit}
-          />
+          <CreateResourceDialog label={props.label} {...props.formProps} />
         </div>
       </div>
     </DashboardLayout>

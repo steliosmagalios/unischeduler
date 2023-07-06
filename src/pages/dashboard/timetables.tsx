@@ -89,10 +89,8 @@ export default function TimetablesPage({ userId }: { userId: string }) {
     <ResourceLayout
       userId={userId}
       label="Timetables"
-      columns={columns}
-      data={data ?? []}
-      onSubmit={onSubmit}
-      schema={schema}
+      tableProps={{ columns, data: data ?? [] }}
+      formProps={{ schema, onSubmit }}
     />
   );
 }

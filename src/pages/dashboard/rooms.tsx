@@ -87,10 +87,8 @@ export default function RoomsPage({ userId }: { userId: string }) {
     <ResourceLayout
       userId={userId}
       label="Rooms"
-      columns={columns}
-      data={data ?? []}
-      onSubmit={onSubmit}
-      schema={schema}
+      tableProps={{ columns, data: data ?? [] }}
+      formProps={{ schema, onSubmit }}
     />
   );
 }

@@ -13,13 +13,12 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
 
-type CreateResourceDialogProps = {
+export type CreateResourceDialogProps = {
   label: string;
   schema: RTFFormSchemaType;
   onSubmit: RTFFormSubmitFn<RTFFormSchemaType>;
@@ -53,9 +52,9 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
           onSubmit={onSubmit}
           // i don't like this
           renderAfter={() => (
-            <DialogFooter className="mt-4">
-              <Button type="submit">Create</Button>
-            </DialogFooter>
+            <Button type="submit" className="mt-4">
+              Create
+            </Button>
           )}
         />
       </DialogContent>
