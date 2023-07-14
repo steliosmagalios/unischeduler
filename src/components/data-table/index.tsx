@@ -1,4 +1,5 @@
 import {
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -6,7 +7,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TableNavigation from "~/components/data-table/table-navigation";
 import {
   Table,
@@ -23,28 +24,37 @@ export interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData extends { id: string }, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const actionsColumnDef: ColumnDef<TData, TValue> = {
-    id: "actions",
-    enableSorting: false,
-    enableHiding: false,
+export function DataTable<TData extends { id: string }, TValue>(
+  props: DataTableProps<TData, TValue>
+) {
+  const helper = createColumnHelper<TData>();
+  const columns = useMemo(
+    () => [
+      ...props.columns,
+      helper.display({
+        id: "actions",
+        enableSorting: false,
+        enableHiding: false,
 
-    header: () => <span className="flex w-full justify-center">Actions</span>,
-    cell: ({ row }) => (
-      <span className="flex w-full justify-center">
-        <ActionsMenu itemId={row.original.id} />
-      </span>
-    ),
-  };
+        header: () => (
+          <span className="flex w-full justify-center">Actions</span>
+        ),
+        cell: ({ row }) => (
+          <span className="flex w-full justify-center">
+            <ActionsMenu itemId={row.original.id} />
+          </span>
+        ),
+      }),
+    ],
+    [helper, props.columns]
+  );
 
+  // Table state
   const [pagination, setPagination] = useState({ pageSize: 10, pageIndex: 0 });
 
   const table = useReactTable({
-    data,
-    columns: [...columns, actionsColumnDef],
+    data: props.data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
