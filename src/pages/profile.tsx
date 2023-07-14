@@ -3,6 +3,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import ManageCoursesDialog from "~/components/manage-courses-dialog";
 import Timetable from "~/components/timetable";
 import UserCard from "~/components/user-card";
 import { api } from "~/utils/api";
@@ -101,7 +102,8 @@ export default function Profile({ userId }: { userId: string }) {
           <div className="col-span-9 h-full overflow-hidden">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Your Weekly schedule</h2>
-              <button className="mr-4 text-sm text-blue-300">Edit</button>
+              <ManageCoursesDialog />
+              {/* <button className="mr-4 text-sm text-blue-300">Edit</button> */}
             </div>
             <hr className="mb-2" />
             <Timetable />
