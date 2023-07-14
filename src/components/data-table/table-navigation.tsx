@@ -16,7 +16,7 @@ export default function TableNavigation<TData>(
   props: TableNavigationProps<TData>
 ) {
   return (
-    <div className="flex h-12 items-center justify-end gap-1 border-t px-4 font-medium">
+    <div className="flex h-14 flex-shrink-0 items-center justify-end gap-1 border-t px-4 font-medium">
       <Button
         variant="outline"
         className="h-8 w-8 p-0"

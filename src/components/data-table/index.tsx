@@ -50,7 +50,7 @@ export function DataTable<TData extends { id: string }, TValue>(
   );
 
   // Table state
-  const [pagination, setPagination] = useState({ pageSize: 10, pageIndex: 0 });
+  const [pagination, setPagination] = useState({ pageSize: 15, pageIndex: 0 });
 
   const table = useReactTable({
     data: props.data,
@@ -64,8 +64,8 @@ export function DataTable<TData extends { id: string }, TValue>(
   });
 
   return (
-    <div className="flex h-full flex-col rounded border">
-      <div className="flex-grow rounded">
+    <div className="flex h-full flex-col overflow-y-hidden border">
+      <div className="flex-grow overflow-y-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
