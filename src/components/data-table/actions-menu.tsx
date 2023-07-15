@@ -1,4 +1,6 @@
 import { MoreHorizontal } from "lucide-react";
+import { type Key } from "react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,27 +10,21 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 
+export type ActionMenuItem =
+  | {
+      label: string;
+      onClick: (itemId: string) => void;
+    }
+  | {
+      render: (key: Key | null | undefined, itemId: string) => React.ReactNode;
+    };
+
 type ActionsMenuType = {
   itemId: string;
+  actions?: ActionMenuItem[];
 };
 
 export default function ActionsMenu(props: ActionsMenuType) {
-  function handleView() {
-    // TODO
-    // open view modal
-  }
-
-  function handleEdit() {
-    // TODO
-    // open edit modal
-  }
-
-  function handleDelete() {
-    // TODO
-    // confirm delete
-    // call trpc
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,9 +36,20 @@ export default function ActionsMenu(props: ActionsMenuType) {
 
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleView}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+        {props.actions?.map((action, index) => {
+          if ("render" in action) {
+            return action.render(index, props.itemId);
+          }
+
+          return (
+            <DropdownMenuItem
+              key={index}
+              onClick={() => action.onClick(props.itemId)}
+            >
+              {action.label}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

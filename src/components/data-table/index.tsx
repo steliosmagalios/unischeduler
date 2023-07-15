@@ -17,11 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import ActionsMenu from "./actions-menu";
+import ActionsMenu, { type ActionMenuItem } from "./actions-menu";
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  actions?: ActionMenuItem[];
 }
 
 export function DataTable<TData extends { id: string }, TValue>(
@@ -41,12 +42,12 @@ export function DataTable<TData extends { id: string }, TValue>(
         ),
         cell: ({ row }) => (
           <span className="flex w-full justify-center">
-            <ActionsMenu itemId={row.original.id} />
+            <ActionsMenu itemId={row.original.id} actions={props.actions} />
           </span>
         ),
       }),
     ],
-    [helper, props.columns]
+    [helper, props.actions, props.columns]
   );
 
   // Table state
