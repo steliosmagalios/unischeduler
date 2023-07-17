@@ -1,4 +1,6 @@
 import { DialogClose } from "@radix-ui/react-dialog";
+import { type RowSelectionState } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 import CourseTable from "~/components/manage-courses-dialog/course-table";
 import { Button } from "~/components/ui/button";
 import {
@@ -12,11 +14,26 @@ import {
 import { api } from "~/utils/api";
 
 export default function ManageCoursesDialog() {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const { data: courses, isLoading: coursesLoading } =
     api.course.getAll.useQuery();
 
+  useEffect(() => {
+    const selectionStr = window.localStorage.getItem("rowSelection");
+
+    try {
+      setRowSelection(JSON.parse(selectionStr ?? "{}") as RowSelectionState); // good enough
+    } catch (e) {
+      console.error(e);
+    }
+  }, [setRowSelection]);
+
   if (coursesLoading) {
     return <div>Loading...</div>;
+  }
+
+  function onSave() {
+    window.localStorage.setItem("rowSelection", JSON.stringify(rowSelection));
   }
 
   return (
@@ -33,14 +50,18 @@ export default function ManageCoursesDialog() {
         </DialogHeader>
 
         <div className="h-[500px]">
-          <CourseTable data={courses ?? []} />
+          <CourseTable
+            data={courses ?? []}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+          />
         </div>
 
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="ghost">Close</Button>
           </DialogClose>
-          <Button>Save</Button>
+          <Button onClick={() => onSave()}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

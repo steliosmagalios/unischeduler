@@ -3,13 +3,15 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type PaginationState,
+  type RowSelectionState,
   type SortingState,
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import TableNavigation from "~/components/data-table/table-navigation";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -24,6 +26,8 @@ import {
 
 type CourseTableProps = {
   data: Course[];
+  rowSelection: RowSelectionState;
+  setRowSelection: Dispatch<SetStateAction<RowSelectionState>>;
 };
 
 const helper = createColumnHelper<Course>();
@@ -100,25 +104,25 @@ const columns = [
   }),
 ];
 
-export default function CourseTable({ data }: CourseTableProps) {
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({}); // Maybe this should come from local storage?
+export default function CourseTable(props: CourseTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 1,
+    pageSize: 10,
   });
 
   const table = useReactTable({
-    data,
+    data: props.data,
     columns,
     getRowId: (row) => row.id,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: props.setRowSelection,
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     state: {
-      rowSelection,
+      rowSelection: props.rowSelection,
       sorting,
       pagination,
     },
