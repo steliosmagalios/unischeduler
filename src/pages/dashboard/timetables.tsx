@@ -3,6 +3,7 @@ import { type Timetable } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import useActions from "~/components/data-table/use-actions";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -80,16 +81,27 @@ export default function TimetablesPage({ userId }: { userId: string }) {
       void context.timetable.invalidate();
     },
   });
+  const { mutate: mutateDelete } = api.timetable.delete.useMutation({
+    onSuccess() {
+      void context.timetable.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
     mutate(values);
   }
+  const actions = useActions({
+    resource: "group",
+    onDeleteClick(id) {
+      mutateDelete({ id });
+    },
+  });
 
   return (
     <ResourceLayout
       userId={userId}
       label="Timetables"
-      tableProps={{ columns, data: data ?? [] }}
+      tableProps={{ columns, data: data ?? [], actions }}
       formProps={{ schema, onSubmit }}
     />
   );

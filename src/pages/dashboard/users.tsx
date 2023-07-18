@@ -3,6 +3,7 @@ import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import useActions from "~/components/data-table/use-actions";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -77,16 +78,28 @@ export default function UsersPage({ userId }: { userId: string }) {
       void context.user.invalidate();
     },
   });
+  const { mutate: mutateDelete } = api.user.delete.useMutation({
+    onSuccess() {
+      void context.user.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
     mutate(values);
   }
 
+  const actions = useActions({
+    resource: "group",
+    onDeleteClick(id) {
+      mutateDelete({ id });
+    },
+  });
+
   return (
     <ResourceLayout
       userId={userId}
       label="Users"
-      tableProps={{ columns, data: data ?? [] }}
+      tableProps={{ columns, data: data ?? [], actions }}
       formProps={{ schema, onSubmit }}
     />
   );

@@ -3,6 +3,7 @@ import { type Group } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import useActions from "~/components/data-table/use-actions";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -48,21 +49,32 @@ const schema = z.object({
 export default function GroupsPage({ userId }: { userId: string }) {
   const context = api.useContext();
   const { data } = api.group.getAll.useQuery();
-  const { mutate } = api.group.create.useMutation({
+  const { mutate: mutateCreate } = api.group.create.useMutation({
     onSuccess() {
       void context.group.getAll.invalidate();
     },
   });
-
+  const { mutate: mutateDelete } = api.group.delete.useMutation({
+    onSuccess() {
+      void context.group.getAll.invalidate();
+    },
+  });
   function onSubmit(values: z.infer<typeof schema>) {
-    mutate(values);
+    mutateCreate(values);
   }
+
+  const actions = useActions({
+    resource: "group",
+    onDeleteClick(id) {
+      mutateDelete({ id });
+    },
+  });
 
   return (
     <ResourceLayout
       userId={userId}
       label="Groups"
-      tableProps={{ columns, data: data ?? [] }}
+      tableProps={{ columns, data: data ?? [], actions }}
       formProps={{ schema, onSubmit }}
     />
   );
