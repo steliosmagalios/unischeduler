@@ -52,9 +52,11 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
           onSubmit={onSubmit}
           // i don't like this
           renderAfter={() => (
-            <Button type="submit" className="mt-4">
-              Create
-            </Button>
+            <div className="flex flex-row-reverse">
+              <Button type="submit" className="mt-4">
+                Create
+              </Button>
+            </div>
           )}
         />
       </DialogContent>
