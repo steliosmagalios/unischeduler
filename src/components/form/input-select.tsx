@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-export default function TextInput() {
+export default function SelectInput() {
   const ctx = useFormContext();
   const { field } = useTsController<string>();
   const { label, placeholder } = useDescription();

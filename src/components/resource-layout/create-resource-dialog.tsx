@@ -1,14 +1,10 @@
-import { createTsForm, createUniqueFieldSchema } from "@ts-react/form";
 import type {
   RTFFormSchemaType,
   RTFFormSubmitFn,
 } from "@ts-react/form/lib/src/createSchemaForm";
 import { useState } from "react";
-import { z } from "zod";
-import NumberInput from "~/components/form/input-number";
-import SelectInput from "~/components/form/input-select";
-import TextInput from "~/components/form/input-text";
-import TextAreaInput from "~/components/form/input-textarea";
+import { type z } from "zod";
+import CustomForm from "~/components/form/custom-form";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -47,7 +43,7 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
           <DialogTitle>Create {props.label}</DialogTitle>
         </DialogHeader>
 
-        <CreateForm
+        <CustomForm
           schema={props.schema}
           onSubmit={onSubmit}
           // i don't like this
@@ -63,14 +59,3 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
     </Dialog>
   );
 }
-
-export const TextAreaSchema = createUniqueFieldSchema(z.string(), "textarea");
-
-const mapping = [
-  [z.string(), TextInput] as const,
-  [TextAreaSchema, TextAreaInput] as const,
-  [z.number(), NumberInput] as const,
-  [z.enum([""]), SelectInput] as const,
-] as const;
-
-const CreateForm = createTsForm(mapping);
