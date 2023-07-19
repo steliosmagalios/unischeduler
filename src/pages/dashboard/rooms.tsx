@@ -90,7 +90,7 @@ export default function RoomsPage({ userId }: { userId: string }) {
   }
 
   const actions = useActions({
-    resource: "group",
+    resource: "room",
     onDeleteClick(id) {
       mutateDelete({ id });
     },

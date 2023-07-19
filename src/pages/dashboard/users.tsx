@@ -89,7 +89,7 @@ export default function UsersPage({ userId }: { userId: string }) {
   }
 
   const actions = useActions({
-    resource: "group",
+    resource: "user",
     onDeleteClick(id) {
       mutateDelete({ id });
     },

@@ -91,7 +91,7 @@ export default function TimetablesPage({ userId }: { userId: string }) {
     mutate(values);
   }
   const actions = useActions({
-    resource: "group",
+    resource: "timetable",
     onDeleteClick(id) {
       mutateDelete({ id });
     },
