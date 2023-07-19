@@ -68,7 +68,7 @@ export function DataTable<TData extends { id: string }, TValue>(
     <div className="flex h-full flex-col overflow-y-hidden border">
       <div className="flex-grow overflow-y-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 border-b-4 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
