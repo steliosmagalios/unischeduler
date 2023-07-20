@@ -2,6 +2,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import DashboardLayout from "~/components/dashboard-layout";
 import Timetable from "~/components/timetable";
+import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -31,14 +32,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const dummyResources: Record<string, number> = {
-  courses: 16,
-  groups: 8,
-  rooms: 4,
-  users: 2,
-  timetables: 1,
-};
-
 function ResourceCard(props: { label: string; count: number }) {
   return (
     <div className="flex h-28 flex-1 flex-col justify-between rounded-md bg-gradient-to-br from-transparent from-30% via-slate-900 via-70% to-slate-800 px-4 py-2 font-bold">
@@ -49,6 +42,12 @@ function ResourceCard(props: { label: string; count: number }) {
 }
 
 export default function DashboardHome({ userId }: { userId: string }) {
+  const { data, isLoading } = api.statistics.get.useQuery();
+
+  if (isLoading || data === undefined) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <DashboardLayout label="Dashboard" userId={userId}>
       <div className="flex flex-col gap-4">
@@ -57,11 +56,11 @@ export default function DashboardHome({ userId }: { userId: string }) {
           <hr className="mb-2" />
 
           <div className="flex gap-2">
-            {Object.keys(dummyResources).map((k) => (
+            {Object.keys(data).map((k) => (
               <ResourceCard
                 key={k}
                 label={k}
-                count={dummyResources[k] ?? NaN}
+                count={data[k as keyof typeof data] ?? NaN}
               />
             ))}
           </div>

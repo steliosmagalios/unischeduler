@@ -1,6 +1,7 @@
 import { courseRouter } from "~/server/api/routers/course";
 import { groupRouter } from "~/server/api/routers/group";
 import { roomRouter } from "~/server/api/routers/room";
+import { statisticsRouter } from "~/server/api/routers/statistics";
 import { timetableRouter } from "~/server/api/routers/timetable";
 import { userRouter } from "~/server/api/routers/user";
 import { createTRPCRouter } from "~/server/api/trpc";
@@ -16,6 +17,8 @@ export const appRouter = createTRPCRouter({
   room: roomRouter,
   user: userRouter,
   timetable: timetableRouter,
+
+  statistics: statisticsRouter,
 });
 
 // export type definition of API
