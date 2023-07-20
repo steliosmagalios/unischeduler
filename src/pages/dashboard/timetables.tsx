@@ -53,7 +53,15 @@ const columns: ColumnDef<Timetable>[] = [
     id: "status",
     header: () => <span className="flex w-full justify-center">Status</span>,
     cell({ row }) {
-      // TODO: Add the generated status
+      if (!row.original.generated) {
+        return (
+          <span className="flex w-full items-center justify-center gap-2">
+            <div className="aspect-square h-3 rounded-full bg-red-500" />
+            Not Generated
+          </span>
+        );
+      }
+
       return (
         <span className="flex w-full items-center justify-center gap-2">
           <div

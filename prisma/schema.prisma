@@ -104,6 +104,7 @@ model Timetable {
     semester  TimetableSemester
     tasks     Task[]
     published Boolean           @default(false)
+    generated Boolean           @default(false)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
