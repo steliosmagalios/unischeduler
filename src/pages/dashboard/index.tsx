@@ -41,7 +41,7 @@ const dummyResources: Record<string, number> = {
 
 function ResourceCard(props: { label: string; count: number }) {
   return (
-    <div className="flex h-28 flex-1 flex-col justify-between rounded-md bg-gradient-to-br from-background to-slate-700 px-4 py-2 font-bold">
+    <div className="flex h-28 flex-1 flex-col justify-between rounded-md bg-gradient-to-br from-transparent from-30% via-slate-900 via-70% to-slate-800 px-4 py-2 font-bold">
       <span className="text-2xl capitalize">{props.label}</span>
       <span className="self-end pl-4 text-3xl">{props.count}</span>
     </div>

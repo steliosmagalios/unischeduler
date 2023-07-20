@@ -7,14 +7,14 @@ export default function Timetable() {
   return (
     <div className="grid grid-cols-6 gap-px">
       <div className="flex flex-col gap-px">
-        <div className="flex h-8 items-center justify-center bg-green-800 font-bold">
+        <div className="flex h-8 items-center justify-center bg-fuchsia-800 font-bold">
           Time
         </div>
 
         {TIMESLOTS.map((time) => (
           <div
             key={time}
-            className="flex h-12 items-center justify-center bg-green-800 even:bg-green-700"
+            className="flex h-12 items-center justify-center bg-fuchsia-800 even:bg-fuchsia-700"
           >
             {`${time.toString().padStart(2, "0")}:00 - ${(time + 1)
               .toString()
@@ -25,13 +25,13 @@ export default function Timetable() {
 
       {DAYS.map((day) => (
         <div key={day} className="flex flex-col gap-px">
-          <div className="flex h-8 items-center justify-center bg-green-800 font-bold">
+          <div className="flex h-8 items-center justify-center bg-fuchsia-800 font-bold">
             {day}
           </div>
           {TIMESLOTS.map((time) => (
             <div
               key={time}
-              className="flex h-12 items-center justify-center bg-green-800 even:bg-green-700"
+              className="flex h-12 items-center justify-center bg-fuchsia-800 even:bg-fuchsia-700"
             ></div>
           ))}
         </div>
