@@ -41,16 +41,6 @@ const columns: ColumnDef<Timetable>[] = [
     header: "Name",
   },
   {
-    id: "time",
-    header: () => <span className="flex w-full justify-center">Timeslots</span>,
-    cell: ({ row }) => (
-      <span className="flex w-full justify-center">
-        {row.original.dayStart.toString().padStart(2, "0")}:00 -{" "}
-        {row.original.dayEnd.toString().padStart(2, "0")}:00
-      </span>
-    ),
-  },
-  {
     accessorKey: "semester",
     header: () => <span className="flex w-full justify-center">Semester</span>,
     cell: ({ row }) => (
@@ -78,17 +68,10 @@ const columns: ColumnDef<Timetable>[] = [
   },
 ];
 
-const schema = z
-  .object({
-    name: z.string().nonempty().describe("Name // Name of the timetable"),
-    semester: z.enum(["Fall", "Spring"]).describe("Semester // Semester"),
-    dayStart: z.number().min(0).max(23).describe("Start Time // Start time"),
-    dayEnd: z.number().min(0).max(23).describe("End Time // End time"),
-  })
-  .refine(
-    (data) => data.dayStart < data.dayEnd,
-    "Start time must be before end time"
-  );
+const schema = z.object({
+  name: z.string().nonempty().describe("Name // Name of the timetable"),
+  semester: z.enum(["Fall", "Spring"]).describe("Semester // Semester"),
+});
 
 export default function TimetablesPage({ userId }: { userId: string }) {
   const context = api.useContext();

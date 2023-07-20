@@ -102,8 +102,6 @@ model Timetable {
     id        String            @id @default(cuid())
     name      String
     semester  TimetableSemester
-    dayStart  Int               @db.SmallInt
-    dayEnd    Int               @db.SmallInt
     tasks     Task[]
     published Boolean           @default(false)
 

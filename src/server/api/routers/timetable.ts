@@ -8,8 +8,6 @@ import {
 
 const baseTimetableSchema = z.object({
   name: z.string(),
-  dayStart: z.number(),
-  dayEnd: z.number(),
   semester: z.enum(["Fall", "Spring"]),
 });
 
