@@ -39,6 +39,15 @@ const dummyResources: Record<string, number> = {
   timetables: 1,
 };
 
+function ResourceCard(props: { label: string; count: number }) {
+  return (
+    <div className="flex h-28 flex-1 flex-col justify-between rounded-md bg-gradient-to-br from-background to-slate-700 px-4 py-2 font-bold">
+      <span className="text-2xl capitalize">{props.label}</span>
+      <span className="self-end pl-4 text-3xl">{props.count}</span>
+    </div>
+  );
+}
+
 export default function DashboardHome({ userId }: { userId: string }) {
   return (
     <DashboardLayout label="Dashboard" userId={userId}>
@@ -49,9 +58,11 @@ export default function DashboardHome({ userId }: { userId: string }) {
 
           <div className="flex gap-2">
             {Object.keys(dummyResources).map((k) => (
-              <div key={k} className="h-28 flex-1 bg-violet-800 font-bold">
-                {k}: {dummyResources[k]}
-              </div>
+              <ResourceCard
+                key={k}
+                label={k}
+                count={dummyResources[k] ?? NaN}
+              />
             ))}
           </div>
         </div>
