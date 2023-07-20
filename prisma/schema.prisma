@@ -99,12 +99,13 @@ enum TimetableSemester {
 }
 
 model Timetable {
-    id       String            @id @default(cuid())
-    name     String
-    semester TimetableSemester
-    dayStart Int               @db.SmallInt
-    dayEnd   Int               @db.SmallInt
-    tasks    Task[]
+    id        String            @id @default(cuid())
+    name      String
+    semester  TimetableSemester
+    dayStart  Int               @db.SmallInt
+    dayEnd    Int               @db.SmallInt
+    tasks     Task[]
+    published Boolean           @default(false)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

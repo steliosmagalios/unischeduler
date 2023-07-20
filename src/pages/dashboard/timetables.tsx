@@ -59,6 +59,23 @@ const columns: ColumnDef<Timetable>[] = [
       </span>
     ),
   },
+  {
+    id: "status",
+    header: () => <span className="flex w-full justify-center">Status</span>,
+    cell({ row }) {
+      // TODO: Add the generated status
+      return (
+        <span className="flex w-full items-center justify-center gap-2">
+          <div
+            className={`aspect-square h-3 rounded-full ${
+              row.original.published ? "bg-green-500" : "bg-yellow-500"
+            }`}
+          />
+          {row.original.published ? "Published" : "Unpublished"}
+        </span>
+      );
+    },
+  },
 ];
 
 const schema = z

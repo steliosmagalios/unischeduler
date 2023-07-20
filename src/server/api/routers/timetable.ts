@@ -31,6 +31,10 @@ export const timetableRouter = createTRPCRouter({
       return item;
     }),
 
+  getPublished: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.timetable.findFirst({ where: { published: true } });
+  }),
+
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.timetable.findMany();
   }),
@@ -65,5 +69,61 @@ export const timetableRouter = createTRPCRouter({
           message: "Timetable not found",
         });
       }
+    }),
+
+  publish: adminOnlyProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if the timetable exists
+      const exists =
+        (await ctx.prisma.timetable.findFirst({ where: { id: input.id } })) !==
+        null;
+
+      if (!exists) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "The requested timetable was not found!",
+        });
+      }
+
+      // Unpublish every other unpublished timetable
+      await ctx.prisma.timetable.updateMany({
+        where: { published: true },
+        data: { published: false },
+      });
+
+      // Publish this timetable
+      await ctx.prisma.timetable.update({
+        where: { id: input.id },
+        data: { published: true },
+      });
+    }),
+
+  unpublish: adminOnlyProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      // Unpublish this timetable
+      try {
+        await ctx.prisma.timetable.update({
+          where: { id: input.id },
+          data: { published: false },
+        });
+      } catch {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "The requested timetable was not found!",
+        });
+      }
+    }),
+
+  generate: adminOnlyProcedure
+    .input(
+      z.object({ id: z.string().cuid(), lectures: z.array(z.string().cuid()) })
+    )
+    .mutation(({ ctx, input }) => {
+      throw new TRPCError({
+        code: "METHOD_NOT_SUPPORTED",
+        message: "Timetable generation is not currently supported",
+      });
     }),
 });
