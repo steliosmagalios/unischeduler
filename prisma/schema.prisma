@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+    provider = "prisma-client-js"
 }
 
 datasource db {
@@ -16,7 +15,7 @@ datasource db {
 }
 
 model User {
-    id           String   @id @default(cuid())
+    id           Int      @id @default(autoincrement())
     externalId   String?  @unique
     firstName    String?
     lastName     String?
@@ -38,7 +37,7 @@ enum UserRole {
 }
 
 model Course {
-    id       String    @id @default(cuid())
+    id       Int       @id @default(autoincrement())
     code     String    @unique
     name     String
     semester Int       @db.SmallInt
@@ -49,14 +48,14 @@ model Course {
 }
 
 model Lecture {
-    id       String   @id @default(cuid())
+    id       Int      @id @default(autoincrement())
     name     String
     type     RoomType
     duration Int      @db.SmallInt
     groups   Group[]
 
     Course   Course @relation(fields: [courseId], references: [id])
-    courseId String
+    courseId Int
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -64,7 +63,7 @@ model Lecture {
 }
 
 model Group {
-    id   String @id @default(cuid())
+    id   Int    @id @default(autoincrement())
     name String
 
     overlapping  Group[] @relation("OverlappingGroups")
@@ -82,7 +81,7 @@ enum RoomType {
 }
 
 model Room {
-    id           String   @id @default(cuid())
+    id           Int      @id @default(autoincrement())
     name         String   @unique
     type         RoomType
     capacity     Int      @db.Integer
@@ -99,7 +98,7 @@ enum TimetableSemester {
 }
 
 model Timetable {
-    id        String            @id @default(cuid())
+    id        Int               @id @default(autoincrement())
     name      String
     semester  TimetableSemester
     tasks     Task[]
@@ -111,15 +110,15 @@ model Timetable {
 }
 
 model Task {
-    id        String  @id @default(cuid())
+    id        Int     @id @default(autoincrement())
     startTime Int     @db.SmallInt
     lecture   Lecture @relation(fields: [lectureId], references: [id])
-    lectureId String
+    lectureId Int
     room      Room    @relation(fields: [roomId], references: [id])
-    roomId    String
+    roomId    Int
 
     Timetable   Timetable @relation(fields: [timetableId], references: [id])
-    timetableId String
+    timetableId Int
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
