@@ -25,7 +25,7 @@ export interface DataTableProps<TData, TValue> {
   actions?: ActionMenuItem[];
 }
 
-export function DataTable<TData extends { id: string }, TValue>(
+export function DataTable<TData extends { id: number }, TValue>(
   props: DataTableProps<TData, TValue>
 ) {
   const helper = createColumnHelper<TData>();

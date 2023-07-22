@@ -5,7 +5,7 @@ import CreateResourceDialog, {
 } from "~/components/resource-layout/create-resource-dialog";
 import { capitalize } from "~/utils/lib";
 
-type ResourceLayoutProps<TData extends { id: string }, TType> = {
+type ResourceLayoutProps<TData extends { id: number }, TType> = {
   label: string;
   userId: string;
 
@@ -13,7 +13,7 @@ type ResourceLayoutProps<TData extends { id: string }, TType> = {
   formProps: Omit<CreateResourceDialogProps, "label">;
 };
 
-export default function ResourceLayout<TData extends { id: string }, TType>(
+export default function ResourceLayout<TData extends { id: number }, TType>(
   props: ResourceLayoutProps<TData, TType>
 ) {
   return (

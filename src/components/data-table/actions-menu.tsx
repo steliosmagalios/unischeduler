@@ -13,14 +13,14 @@ import { Button } from "../ui/button";
 export type ActionMenuItem =
   | {
       label: string;
-      onClick: (itemId: string) => void;
+      onClick: (itemId: number) => void;
     }
   | {
-      render: (key: Key | null | undefined, itemId: string) => React.ReactNode;
+      render: (key: Key | null | undefined, itemId: number) => React.ReactNode;
     };
 
 type ActionsMenuType = {
-  itemId: string;
+  itemId: number;
   actions?: ActionMenuItem[];
 };
 
