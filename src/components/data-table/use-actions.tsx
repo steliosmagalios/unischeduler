@@ -16,7 +16,7 @@ import { Button } from "~/components/ui/button";
 
 type UseActionsProps = {
   resource: string;
-  onDeleteClick: (id: string) => void;
+  onDeleteClick: (id: number) => void;
   newActions?: ActionMenuItem[];
 };
 
