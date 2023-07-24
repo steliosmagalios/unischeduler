@@ -7,4 +7,8 @@ services:
       - .env
     volumes:
       - ./db-data/:/var/lib/postgresql/data/
-  
+  scheduler:
+    image: 'stmagalios/university-scheduler-server:latest'
+    ports:
+      - 18080:8080
+    
