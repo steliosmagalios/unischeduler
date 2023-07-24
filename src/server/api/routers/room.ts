@@ -14,7 +14,7 @@ const baseRoomSchema = z.object({
 
 export const roomRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.room.findUnique({
         where: { id: input.id },
@@ -54,7 +54,7 @@ export const roomRouter = createTRPCRouter({
   }),
 
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.room.delete({ where: { id: input.id } });

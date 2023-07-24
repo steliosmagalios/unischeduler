@@ -12,7 +12,7 @@ const baseGroupProps = z.object({
 
 export const groupRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.group.findUnique({
         where: { id: input.id },
@@ -48,9 +48,9 @@ export const groupRouter = createTRPCRouter({
   update: adminOnlyProcedure
     .input(
       z.object({
-        id: z.string().cuid(),
+        id: z.number(),
         data: baseGroupProps.extend({
-          overlapping: z.array(z.string().cuid()),
+          overlapping: z.array(z.number()),
         }), // Maybe optional here??
       })
     )
@@ -78,7 +78,7 @@ export const groupRouter = createTRPCRouter({
     }),
 
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.group.delete({ where: { id: input.id } });

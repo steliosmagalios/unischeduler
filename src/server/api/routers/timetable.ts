@@ -13,7 +13,7 @@ const baseTimetableSchema = z.object({
 
 export const timetableRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.timetable.findUnique({
         where: { id: input.id },
@@ -57,7 +57,7 @@ export const timetableRouter = createTRPCRouter({
   }),
 
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.timetable.delete({ where: { id: input.id } });
@@ -70,7 +70,7 @@ export const timetableRouter = createTRPCRouter({
     }),
 
   publish: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       // Check if the timetable exists
       const exists =
@@ -98,7 +98,7 @@ export const timetableRouter = createTRPCRouter({
     }),
 
   unpublish: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       // Unpublish this timetable
       try {
@@ -115,9 +115,7 @@ export const timetableRouter = createTRPCRouter({
     }),
 
   generate: adminOnlyProcedure
-    .input(
-      z.object({ id: z.string().cuid(), lectures: z.array(z.string().cuid()) })
-    )
+    .input(z.object({ lectures: z.array(z.number()) }))
     .mutation(({ ctx, input }) => {
       throw new TRPCError({
         code: "METHOD_NOT_SUPPORTED",

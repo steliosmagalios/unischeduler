@@ -14,7 +14,7 @@ const baseCourseSchema = z.object({
 
 export const courseRouter = createTRPCRouter({
   get: publicProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.course.findUnique({
         where: { id: input.id },
@@ -54,7 +54,7 @@ export const courseRouter = createTRPCRouter({
   }),
 
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.course.delete({ where: { id: input.id } });

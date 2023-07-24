@@ -55,7 +55,7 @@ export const userRouter = createTRPCRouter({
   }),
 
   delete: adminOnlyProcedure
-    .input(z.object({ id: z.string().cuid() }))
+    .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
       try {
         return await ctx.prisma.user.delete({ where: { id: input.id } });
