@@ -1,18 +1,26 @@
 import { forwardRef } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
+import { cn } from "~/utils/shad-utils";
 
 export type DialogItemProps = {
   triggerChildren: React.ReactNode;
   children: React.ReactNode;
   onSelect?: () => void;
   onOpenChange?: (open: boolean) => void;
+  contentClasses?: string;
 } & React.ComponentProps<typeof DropdownMenuItem>;
 
 const DialogItem = forwardRef<HTMLDivElement, DialogItemProps>(
   (props, forwardedRef) => {
-    const { triggerChildren, children, onSelect, onOpenChange, ...itemProps } =
-      props;
+    const {
+      triggerChildren,
+      children,
+      onSelect,
+      onOpenChange,
+      contentClasses = "",
+      ...itemProps
+    } = props;
     return (
       <Dialog onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
@@ -28,7 +36,11 @@ const DialogItem = forwardRef<HTMLDivElement, DialogItemProps>(
             {triggerChildren}
           </DropdownMenuItem>
         </DialogTrigger>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent
+          className={cn(contentClasses, "max-h-[90%] overflow-y-scroll")}
+        >
+          {children}
+        </DialogContent>
       </Dialog>
     );
   }

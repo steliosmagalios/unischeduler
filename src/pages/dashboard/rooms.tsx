@@ -4,6 +4,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
 import useActions from "~/components/data-table/use-actions";
+import { AvilabilitySchema } from "~/components/form/custom-form";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -71,6 +72,12 @@ const schema = z.object({
     .describe("Type // Select the room's type"), // Somehow, sync this with prisma type
 });
 
+const editSchema = schema.extend({
+  availability: AvilabilitySchema.describe(
+    "Availability // Availability of the room"
+  ),
+});
+
 export default function RoomsPage({ userId }: { userId: string }) {
   const context = api.useContext();
   const { data } = api.room.getAll.useQuery();
@@ -84,13 +91,26 @@ export default function RoomsPage({ userId }: { userId: string }) {
       void context.room.invalidate();
     },
   });
+  const { mutate: editMutate } = api.room.update.useMutation({
+    onSuccess() {
+      void context.room.invalidate();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof schema>) {
     mutate(values);
   }
 
+  function onEdit(value: z.infer<typeof editSchema>) {
+    editMutate(value);
+  }
+
   const actions = useActions({
     resource: "room",
+    editProps: {
+      schema: editSchema,
+      submit: onEdit,
+    },
     onDeleteClick(id) {
       mutateDelete({ id });
     },

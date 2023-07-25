@@ -47,11 +47,13 @@ export const roomRouter = createTRPCRouter({
       }
     }),
 
-  update: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  update: adminOnlyProcedure
+    .input(baseRoomSchema.extend({ availability: z.array(z.number()) }))
+    .mutation(() => {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+      });
+    }),
 
   delete: adminOnlyProcedure
     .input(z.object({ id: z.number() }))
