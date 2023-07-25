@@ -1,6 +1,7 @@
 import { DialogClose } from "@radix-ui/react-dialog";
 import { type RowSelectionState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import { LoadingSpinner } from "~/components/loader";
 import CourseTable from "~/components/manage-courses-dialog/course-table";
 import { Button } from "~/components/ui/button";
 import {
@@ -33,7 +34,7 @@ export default function ManageCoursesDialog() {
   }, [setRowSelection]);
 
   if (coursesLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   function onSave() {

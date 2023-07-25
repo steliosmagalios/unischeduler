@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { LoadingPage } from "~/components/loader";
 import { api } from "~/utils/api";
 import { capitalize } from "~/utils/lib";
 import UserCard from "../user-card";
@@ -48,7 +49,7 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
   const router = useRouter();
 
   if (isUserLoading || userData === undefined) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   return (

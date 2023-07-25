@@ -3,6 +3,7 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { LoadingPage } from "~/components/loader";
 import ManageCoursesDialog from "~/components/manage-courses-dialog";
 import Timetable from "~/components/timetable";
 import UserCard from "~/components/user-card";
@@ -41,7 +42,7 @@ export default function Profile({ userId }: { userId: string }) {
   });
 
   if (isUserLoading || userData === undefined) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   return (

@@ -1,6 +1,7 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type GetServerSideProps } from "next";
 import DashboardLayout from "~/components/dashboard-layout";
+import { LoadingPage } from "~/components/loader";
 import Timetable from "~/components/timetable";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -45,7 +46,7 @@ export default function DashboardHome({ userId }: { userId: string }) {
   const { data, isLoading } = api.statistics.get.useQuery();
 
   if (isLoading || data === undefined) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   return (
