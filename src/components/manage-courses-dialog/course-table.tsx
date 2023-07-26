@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useState, type Dispatch, type SetStateAction } from "react";
-import TableNavigation from "~/components/data-table/table-navigation";
+import Pagination from "~/components/data-table/pagination";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -114,7 +114,7 @@ export default function CourseTable(props: CourseTableProps) {
   const table = useReactTable({
     data: props.data,
     columns,
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -182,7 +182,7 @@ export default function CourseTable(props: CourseTableProps) {
       </div>
 
       {/* TODO: Display selected */}
-      <TableNavigation table={table} />
+      <Pagination table={table} />
     </div>
   );
 }

@@ -3,7 +3,8 @@ import { type Course } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
-import useActions from "~/components/data-table/use-actions";
+import { useRowActions } from "~/components/data-table/row-actions";
+import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -62,40 +63,39 @@ const schema = z.object({
 });
 
 export default function CoursesPage({ userId }: { userId: string }) {
-  const context = api.useContext();
-  const { data } = api.course.getAll.useQuery();
-  const { mutate: mutateCreate } = api.course.create.useMutation({
-    onSuccess() {
-      void context.course.invalidate();
-    },
+  const ctx = api.useContext();
+  const { data, isLoading } = api.course.getAll.useQuery();
+  const updateMutation = api.course.create.useMutation({
+    onSuccess: () => void ctx.course.invalidate(),
   });
-  const { mutate: mutateDelete } = api.course.delete.useMutation({
-    onSuccess() {
-      void context.course.invalidate();
+  const deleteMutation = api.course.delete.useMutation({
+    onSuccess: () => void ctx.course.invalidate(),
+  });
+
+  const actions = useRowActions<Course>({
+    label: "Course",
+    schema,
+    viewComponent: () => null,
+    handlers: {
+      handleEdit(item: z.infer<typeof schema>) {
+        updateMutation.mutate(item);
+      },
+      handleDelete(item) {
+        deleteMutation.mutate({ id: item.id });
+      },
     },
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
-    mutateCreate({ ...values }); // TODO: Check if there is a better way for description
+  if (isLoading || data === undefined) {
+    return <LoadingPage />;
   }
-
-  const actions = useActions({
-    resource: "course",
-    onDeleteClick(id) {
-      mutateDelete({ id });
-    },
-  });
 
   return (
     <ResourceLayout
       userId={userId}
       label="Courses"
-      tableProps={{
-        columns,
-        data: data ?? [],
-        actions,
-      }}
-      formProps={{ schema, onSubmit }}
+      tableProps={{ columns, data }}
+      actions={actions}
     />
   );
 }

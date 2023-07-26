@@ -3,8 +3,8 @@ import { type Room } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
-import useActions from "~/components/data-table/use-actions";
-import { AvilabilitySchema } from "~/components/form/custom-form";
+import { useRowActions } from "~/components/data-table/row-actions";
+import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -42,86 +42,66 @@ const columns: ColumnDef<Room>[] = [
     header: "Name",
   },
   {
-    accessorKey: "capacity",
-    header: () => <span className="flex w-full justify-center">Capacity</span>,
+    accessorKey: "type",
+    header: () => <div className="text-center">Type</div>,
     cell: ({ row }) => (
-      <span className="flex w-full justify-center">
-        {row.renderValue("capacity")}
-      </span>
+      <div className="text-center">{row.getValue("type")}</div>
     ),
   },
   {
-    accessorKey: "type",
-    header: () => <span className="flex w-full justify-center">Type</span>,
+    accessorKey: "capacity",
+    header: () => <div className="text-center">Capacity</div>,
     cell: ({ row }) => (
-      <span className="flex w-full justify-center">
-        {row.renderValue("type")}
-      </span>
+      <div className="text-center">{row.getValue("capacity")}</div>
     ),
   },
 ];
 
-const schema = z.object({
-  name: z.string().nonempty().describe("Name // Name of the room"),
-  capacity: z
-    .number()
-    .min(1, "Room capacity must be at least 1")
-    .describe("Capacity // Capacity of the room"),
-  type: z
-    .enum(["Auditorium", "Laboratory"])
-    .describe("Type // Select the room's type"), // Somehow, sync this with prisma type
-});
+function Test({ item }: { item: Room }) {
+  return <pre>{JSON.stringify(item, null, 2)}</pre>;
+}
 
-const editSchema = schema.extend({
-  availability: AvilabilitySchema.describe(
-    "Availability // Availability of the room"
-  ),
+const schema = z.object({
+  name: z.string(),
+  type: z.enum(["Auditorium", "Laboratory"]),
+  capacity: z.number(),
+  availability: z.array(z.number()),
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {
-  const context = api.useContext();
-  const { data } = api.room.getAll.useQuery();
-  const { mutate } = api.room.create.useMutation({
-    onSuccess() {
-      void context.room.invalidate();
-    },
+  const ctx = api.useContext();
+  const { data, isLoading } = api.room.getAll.useQuery();
+  const deleteMutation = api.room.delete.useMutation({
+    onSuccess: () => ctx.room.invalidate(),
   });
-  const { mutate: mutateDelete } = api.room.delete.useMutation({
-    onSuccess() {
-      void context.room.invalidate();
-    },
+  const updateMutation = api.room.update.useMutation({
+    onSuccess: () => ctx.room.invalidate(),
   });
-  const { mutate: editMutate } = api.room.update.useMutation({
-    onSuccess() {
-      void context.room.invalidate();
+
+  const actions = useRowActions<Room>({
+    label: "Room",
+    viewComponent: Test,
+    schema,
+    handlers: {
+      handleEdit: (item: z.infer<typeof schema>) => {
+        updateMutation.mutate(item);
+      },
+      handleDelete: (item) => {
+        deleteMutation.mutate({ id: item.id });
+      },
     },
   });
 
-  function onSubmit(values: z.infer<typeof schema>) {
-    mutate(values);
+  if (isLoading || data === undefined) {
+    return <LoadingPage />;
   }
-
-  function onEdit(value: z.infer<typeof editSchema>) {
-    editMutate(value);
-  }
-
-  const actions = useActions({
-    resource: "room",
-    editProps: {
-      schema: editSchema,
-      submit: onEdit,
-    },
-    onDeleteClick(id) {
-      mutateDelete({ id });
-    },
-  });
 
   return (
     <ResourceLayout
       userId={userId}
-      label="Rooms"
-      tableProps={{ columns, data: data ?? [], actions }}
-      formProps={{ schema, onSubmit }}
+      label="Room"
+      tableProps={{ columns, data }}
+      actions={actions}
     />
   );
 }

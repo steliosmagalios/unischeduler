@@ -1,14 +1,14 @@
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
   type ColumnDef,
+  type PaginationState,
 } from "@tanstack/react-table";
+import { useState } from "react";
+import Pagination from "~/components/data-table/pagination";
 
-import { useMemo, useState } from "react";
-import TableNavigation from "~/components/data-table/table-navigation";
 import {
   Table,
   TableBody,
@@ -17,45 +17,24 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import ActionsMenu, { type ActionMenuItem } from "./actions-menu";
 
-export interface DataTableProps<TData, TValue> {
+export type DataTableProps<TData extends { id: number }, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  actions?: ActionMenuItem[];
-}
+};
 
-export function DataTable<TData extends { id: number }, TValue>(
+export default function DataTable<TData extends { id: number }, TValue>(
   props: DataTableProps<TData, TValue>
 ) {
-  const helper = createColumnHelper<TData>();
-  const columns = useMemo(
-    () => [
-      ...props.columns,
-      helper.display({
-        id: "actions",
-        enableSorting: false,
-        enableHiding: false,
-
-        header: () => (
-          <span className="flex w-full justify-center">Actions</span>
-        ),
-        cell: ({ row }) => (
-          <span className="flex w-full justify-center">
-            <ActionsMenu itemId={row.original.id} actions={props.actions} />
-          </span>
-        ),
-      }),
-    ],
-    [helper, props.actions, props.columns]
-  );
-
-  // Table state
-  const [pagination, setPagination] = useState({ pageSize: 15, pageIndex: 0 });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 2,
+  });
 
   const table = useReactTable({
     data: props.data,
-    columns,
+    columns: props.columns,
+    getRowId: (row) => row.id.toString(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
@@ -65,10 +44,10 @@ export function DataTable<TData extends { id: number }, TValue>(
   });
 
   return (
-    <div className="flex h-full flex-col overflow-y-hidden border">
-      <div className="flex-grow overflow-y-auto">
-        <Table>
-          <TableHeader className="sticky top-0 border-b-4 bg-background">
+    <div className="flex h-full w-full flex-col rounded-md border">
+      <div className="flex-grow ">
+        <Table className="">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -106,7 +85,7 @@ export function DataTable<TData extends { id: number }, TValue>(
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length + 1}
+                  colSpan={props.columns.length}
                   className="h-24 text-center"
                 >
                   No results.
@@ -116,8 +95,7 @@ export function DataTable<TData extends { id: number }, TValue>(
           </TableBody>
         </Table>
       </div>
-
-      <TableNavigation table={table} />
+      <Pagination table={table} />
     </div>
   );
 }

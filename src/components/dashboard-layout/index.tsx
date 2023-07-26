@@ -6,6 +6,7 @@ import React from "react";
 import { LoadingPage } from "~/components/loader";
 import { api } from "~/utils/api";
 import { capitalize } from "~/utils/lib";
+import { cn } from "~/utils/shad-utils";
 import UserCard from "../user-card";
 import NavLink from "./nav-link";
 
@@ -13,6 +14,7 @@ type DashboardLayoutProps = {
   label?: string;
   children: React.ReactNode;
   userId: string;
+  className?: string;
 };
 
 const navRoutes = [
@@ -87,7 +89,12 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
           </div>
         </aside>
 
-        <main className="col-span-10 h-full max-h-screen overflow-auto p-4 pl-0">
+        <main
+          className={cn(
+            "col-span-10 h-full max-h-screen overflow-auto p-4 pl-0",
+            props.className
+          )}
+        >
           {props.children}
         </main>
       </div>

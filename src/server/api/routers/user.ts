@@ -48,7 +48,7 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  update: adminOnlyProcedure.query(() => {
+  update: adminOnlyProcedure.input(baseUserSchema).mutation(() => {
     throw new TRPCError({
       code: "FORBIDDEN",
     });
