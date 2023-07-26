@@ -109,18 +109,11 @@ export function useRowActions<TData>(props: UseRowActionsProps<TData>) {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel asChild>
-                  <Button variant="ghost" className="font-semibold">
-                    Cancel
-                  </Button>
-                </AlertDialogCancel>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  asChild
                   onClick={() => props.handlers.handleDelete(item)}
                 >
-                  <Button variant="destructive" className="font-bold">
-                    Delete
-                  </Button>
+                  Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogItem>

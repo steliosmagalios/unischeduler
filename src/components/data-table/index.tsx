@@ -44,10 +44,10 @@ export default function DataTable<TData extends { id: number }, TValue>(
   });
 
   return (
-    <div className="flex h-full w-full flex-col rounded-md border">
-      <div className="flex-grow ">
+    <div className="flex h-full w-full flex-col overflow-y-hidden rounded-md border">
+      <div className="flex-grow overflow-y-auto ">
         <Table className="">
-          <TableHeader>
+          <TableHeader className="sticky top-0 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
