@@ -50,6 +50,17 @@ export const courseRouter = createTRPCRouter({
   update: adminOnlyProcedure
     .input(z.object({ id: z.number(), data: baseCourseSchema }))
     .mutation(async ({ ctx, input }) => {
+      // Check if item exists
+      if (
+        (await ctx.prisma.course.findFirst({ where: { id: input.id } })) ===
+        null
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Group with id "${input.id}" was not found`,
+        });
+      }
+
       try {
         return ctx.prisma.course.update({
           where: { id: input.id },

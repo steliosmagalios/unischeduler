@@ -89,9 +89,8 @@ export default function UsersPage({ userId }: { userId: string }) {
     schema,
     viewComponent: () => null,
     handlers: {
-      handleEdit(item: z.infer<typeof schema>) {
-        updateMutation.mutate(item);
-        //
+      handleEdit(data: z.infer<typeof schema>, id) {
+        updateMutation.mutate({ id, data });
       },
       handleDelete(item) {
         deleteMutation.mutate({ id: item.id });

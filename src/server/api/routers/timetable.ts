@@ -50,11 +50,24 @@ export const timetableRouter = createTRPCRouter({
       }
     }),
 
-  update: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  update: adminOnlyProcedure
+    .input(z.object({ id: z.number(), data: baseTimetableSchema }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if item exists
+      if (
+        (await ctx.prisma.group.findFirst({ where: { id: input.id } })) === null
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Group with id "${input.id}" was not found`,
+        });
+      }
+
+      return ctx.prisma.timetable.update({
+        where: { id: input.id },
+        data: input.data,
+      });
+    }),
 
   delete: adminOnlyProcedure
     .input(z.object({ id: z.number() }))

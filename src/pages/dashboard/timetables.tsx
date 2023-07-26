@@ -88,7 +88,7 @@ export default function TimetablesPage({ userId }: { userId: string }) {
   const createMutation = api.timetable.create.useMutation({
     onSuccess: () => void ctx.timetable.invalidate(),
   });
-  const updateMutation = api.timetable.create.useMutation({
+  const updateMutation = api.timetable.update.useMutation({
     onSuccess: () => void ctx.timetable.invalidate(),
   });
   const deleteMutation = api.timetable.delete.useMutation({
@@ -100,8 +100,8 @@ export default function TimetablesPage({ userId }: { userId: string }) {
     schema,
     viewComponent: () => null,
     handlers: {
-      handleEdit(item: z.infer<typeof schema>) {
-        updateMutation.mutate(item);
+      handleEdit(data: z.infer<typeof schema>, id) {
+        updateMutation.mutate({ id, data });
       },
       handleDelete(item) {
         deleteMutation.mutate({ id: item.id });
