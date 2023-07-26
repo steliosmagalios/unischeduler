@@ -68,7 +68,7 @@ export default function CoursesPage({ userId }: { userId: string }) {
   const createMutation = api.course.create.useMutation({
     onSuccess: () => void ctx.course.invalidate(),
   });
-  const updateMutation = api.course.create.useMutation({
+  const updateMutation = api.course.update.useMutation({
     onSuccess: () => void ctx.course.invalidate(),
   });
   const deleteMutation = api.course.delete.useMutation({
@@ -80,8 +80,8 @@ export default function CoursesPage({ userId }: { userId: string }) {
     schema,
     viewComponent: () => null,
     handlers: {
-      handleEdit(item: z.infer<typeof schema>) {
-        updateMutation.mutate(item);
+      handleEdit(data: z.infer<typeof schema>, id) {
+        updateMutation.mutate({ id, data });
       },
       handleDelete(item) {
         deleteMutation.mutate({ id: item.id });

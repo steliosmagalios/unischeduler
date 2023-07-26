@@ -2,9 +2,10 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { type RTFFormSchemaType } from "@ts-react/form/lib/src/createSchemaForm";
 import { MoreHorizontal } from "lucide-react";
 import { useMemo, type Key } from "react";
-import { z } from "zod";
+import { type z } from "zod";
 import AlertDialogItem from "~/components/alert-dialog-item";
 import DialogItem from "~/components/data-table/dialog-item";
+import CustomForm from "~/components/form/custom-form";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -55,14 +56,20 @@ type UseRowActionsProps<TData> = {
   viewComponent: React.ComponentType<{ item: TData }>;
   schema: RTFFormSchemaType;
   handlers: {
-    handleEdit: (item: z.infer<UseRowActionsProps<TData>["schema"]>) => void;
+    handleEdit: (
+      item: z.infer<UseRowActionsProps<TData>["schema"]>,
+      id: number
+    ) => void;
     handleDelete: (item: TData) => void;
   };
   additionalActions?: RowAction<TData>[];
 };
 
-export function useRowActions<TData>(props: UseRowActionsProps<TData>) {
+export function useRowActions<TData extends { id: number }>(
+  props: UseRowActionsProps<TData>
+) {
   const { additionalActions = [] } = props;
+
   return useMemo<RowAction<TData>[]>(
     () => [
       {
@@ -85,12 +92,12 @@ export function useRowActions<TData>(props: UseRowActionsProps<TData>) {
           return (
             <DialogItem key={key} triggerChildren="Edit">
               <DialogTitle>Edit {props.label}</DialogTitle>
-              <pre>{JSON.stringify(item, null, 2)}</pre>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="ghost">Close</Button>
-                </DialogClose>
-              </DialogFooter>
+              <CustomForm
+                schema={props.schema}
+                defaultValues={item}
+                onSubmit={(data) => props.handlers.handleEdit(data, item.id)}
+                renderAfter={() => <Button type="submit">Update</Button>}
+              />
             </DialogItem>
           );
         },

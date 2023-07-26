@@ -47,11 +47,21 @@ export const courseRouter = createTRPCRouter({
       }
     }),
 
-  update: adminOnlyProcedure.query(() => {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-    });
-  }),
+  update: adminOnlyProcedure
+    .input(z.object({ id: z.number(), data: baseCourseSchema }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return ctx.prisma.course.update({
+          where: { id: input.id },
+          data: input.data,
+        });
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Course could not be created.",
+        });
+      }
+    }),
 
   delete: adminOnlyProcedure
     .input(z.object({ id: z.number() }))
