@@ -31,7 +31,7 @@ export default function ResourceLayout<TData extends { id: number }, TValue>(
       label={props.label}
       className="flex flex-col gap-2"
     >
-      <h2 className="text-3xl font-bold">Rooms</h2>
+      <h2 className="text-3xl font-bold">{props.label}</h2>
       <DataTable
         columns={withActions(props.tableProps.columns, props.actions ?? [])}
         data={props.tableProps.data}

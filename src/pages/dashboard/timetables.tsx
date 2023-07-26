@@ -116,7 +116,7 @@ export default function TimetablesPage({ userId }: { userId: string }) {
   return (
     <ResourceLayout
       userId={userId}
-      label="Courses"
+      label="Timetables"
       tableProps={{ columns, data }}
       actions={actions}
       createFormProps={{

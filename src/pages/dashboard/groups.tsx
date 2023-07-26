@@ -81,7 +81,7 @@ export default function GroupsPage({ userId }: { userId: string }) {
   return (
     <ResourceLayout
       userId={userId}
-      label="Courses"
+      label="Groups"
       tableProps={{ columns, data }}
       actions={actions}
       createFormProps={{

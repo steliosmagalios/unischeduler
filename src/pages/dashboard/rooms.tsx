@@ -101,7 +101,7 @@ export default function RoomsPage({ userId }: { userId: string }) {
   return (
     <ResourceLayout
       userId={userId}
-      label="Room"
+      label="Rooms"
       tableProps={{ columns, data }}
       actions={actions}
       createFormProps={{
