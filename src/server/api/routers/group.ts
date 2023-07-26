@@ -49,9 +49,7 @@ export const groupRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number(),
-        data: baseGroupProps.extend({
-          overlapping: z.array(z.number()),
-        }), // Maybe optional here??
+        data: baseGroupProps,
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -70,9 +68,6 @@ export const groupRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.data.name,
-          overlapping: {
-            set: input.data.overlapping.map((id) => ({ id })),
-          },
         },
       });
     }),

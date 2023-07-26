@@ -53,7 +53,7 @@ export default function GroupsPage({ userId }: { userId: string }) {
   const createMutation = api.group.create.useMutation({
     onSuccess: () => void ctx.group.invalidate(),
   });
-  const updateMutation = api.group.create.useMutation({
+  const updateMutation = api.group.update.useMutation({
     onSuccess: () => void ctx.group.invalidate(),
   });
   const deleteMutation = api.group.delete.useMutation({
@@ -65,8 +65,8 @@ export default function GroupsPage({ userId }: { userId: string }) {
     schema,
     viewComponent: () => null,
     handlers: {
-      handleEdit(item: z.infer<typeof schema>) {
-        updateMutation.mutate(item);
+      handleEdit(data: z.infer<typeof schema>, id) {
+        updateMutation.mutate({ id, data });
       },
       handleDelete(item) {
         deleteMutation.mutate({ id: item.id });
