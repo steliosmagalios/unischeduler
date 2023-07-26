@@ -31,7 +31,11 @@ export const courseRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.course.findMany();
+    return ctx.prisma.course.findMany({
+      orderBy: {
+        semester: "asc",
+      },
+    });
   }),
 
   create: adminOnlyProcedure
