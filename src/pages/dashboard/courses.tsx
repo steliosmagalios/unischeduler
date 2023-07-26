@@ -65,6 +65,9 @@ const schema = z.object({
 export default function CoursesPage({ userId }: { userId: string }) {
   const ctx = api.useContext();
   const { data, isLoading } = api.course.getAll.useQuery();
+  const createMutation = api.course.create.useMutation({
+    onSuccess: () => void ctx.course.invalidate(),
+  });
   const updateMutation = api.course.create.useMutation({
     onSuccess: () => void ctx.course.invalidate(),
   });
@@ -96,6 +99,10 @@ export default function CoursesPage({ userId }: { userId: string }) {
       label="Courses"
       tableProps={{ columns, data }}
       actions={actions}
+      createFormProps={{
+        schema,
+        onSubmit: (data: z.infer<typeof schema>) => createMutation.mutate(data),
+      }}
     />
   );
 }

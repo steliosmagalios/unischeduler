@@ -1,10 +1,14 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import {
+  RTFFormSchemaType,
+  RTFFormSubmitFn,
+} from "@ts-react/form/lib/src/createSchemaForm";
 import DashboardLayout from "~/components/dashboard-layout";
 import DataTable, { type DataTableProps } from "~/components/data-table";
 import RowActions, {
   type RowAction,
 } from "~/components/data-table/row-actions";
-import { Button } from "~/components/ui/button";
+import CreateResourceDialog from "~/components/resource-layout/create-resource-dialog";
 
 type ResourceLayoutProps<TData extends { id: number }, TValue> = {
   label: string;
@@ -12,6 +16,10 @@ type ResourceLayoutProps<TData extends { id: number }, TValue> = {
 
   tableProps: DataTableProps<TData, TValue>;
   actions?: RowAction<TData>[];
+  createFormProps: {
+    schema: RTFFormSchemaType;
+    onSubmit: RTFFormSubmitFn<RTFFormSchemaType>;
+  };
 };
 
 export default function ResourceLayout<TData extends { id: number }, TValue>(
@@ -28,7 +36,7 @@ export default function ResourceLayout<TData extends { id: number }, TValue>(
         columns={withActions(props.tableProps.columns, props.actions ?? [])}
         data={props.tableProps.data}
       />
-      <Button className="self-end">Create</Button>
+      <CreateResourceDialog label={props.label} {...props.createFormProps} />
     </DashboardLayout>
   );
 }

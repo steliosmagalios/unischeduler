@@ -74,6 +74,9 @@ const schema = z.object({
 export default function UsersPage({ userId }: { userId: string }) {
   const ctx = api.useContext();
   const { data, isLoading } = api.user.getAll.useQuery();
+  const createMutation = api.user.create.useMutation({
+    onSuccess: () => ctx.user.getAll.invalidate(),
+  });
   const updateMutation = api.user.update.useMutation({
     onSuccess: () => ctx.user.getAll.invalidate(),
   });
@@ -106,6 +109,10 @@ export default function UsersPage({ userId }: { userId: string }) {
       label="Users"
       tableProps={{ columns, data }}
       actions={actions}
+      createFormProps={{
+        schema,
+        onSubmit: (data: z.infer<typeof schema>) => createMutation.mutate(data),
+      }}
     />
   );
 }

@@ -85,6 +85,9 @@ const schema = z.object({
 export default function TimetablesPage({ userId }: { userId: string }) {
   const ctx = api.useContext();
   const { data, isLoading } = api.timetable.getAll.useQuery();
+  const createMutation = api.timetable.create.useMutation({
+    onSuccess: () => void ctx.timetable.invalidate(),
+  });
   const updateMutation = api.timetable.create.useMutation({
     onSuccess: () => void ctx.timetable.invalidate(),
   });
@@ -116,6 +119,10 @@ export default function TimetablesPage({ userId }: { userId: string }) {
       label="Courses"
       tableProps={{ columns, data }}
       actions={actions}
+      createFormProps={{
+        schema,
+        onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
+      }}
     />
   );
 }

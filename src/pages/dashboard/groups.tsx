@@ -50,6 +50,9 @@ const schema = z.object({
 export default function GroupsPage({ userId }: { userId: string }) {
   const ctx = api.useContext();
   const { data, isLoading } = api.group.getAll.useQuery();
+  const createMutation = api.group.create.useMutation({
+    onSuccess: () => void ctx.group.invalidate(),
+  });
   const updateMutation = api.group.create.useMutation({
     onSuccess: () => void ctx.group.invalidate(),
   });
@@ -81,6 +84,10 @@ export default function GroupsPage({ userId }: { userId: string }) {
       label="Courses"
       tableProps={{ columns, data }}
       actions={actions}
+      createFormProps={{
+        schema,
+        onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
+      }}
     />
   );
 }

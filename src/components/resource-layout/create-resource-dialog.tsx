@@ -31,10 +31,7 @@ export default function CreateResourceDialog(props: CreateResourceDialogProps) {
   return (
     <Dialog modal open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="rounded-md bg-blue-500 px-4 py-2 font-semibold"
-          onClick={() => setOpen(true)}
-        >
+        <Button className="self-end" onClick={() => setOpen(true)}>
           Create
         </Button>
       </DialogTrigger>

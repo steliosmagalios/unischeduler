@@ -65,12 +65,14 @@ const schema = z.object({
   name: z.string(),
   type: z.enum(["Auditorium", "Laboratory"]),
   capacity: z.number(),
-  availability: z.array(z.number()),
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {
   const ctx = api.useContext();
   const { data, isLoading } = api.room.getAll.useQuery();
+  const createMutation = api.room.create.useMutation({
+    onSuccess: () => ctx.room.invalidate(),
+  });
   const deleteMutation = api.room.delete.useMutation({
     onSuccess: () => ctx.room.invalidate(),
   });
@@ -84,7 +86,7 @@ export default function RoomsPage({ userId }: { userId: string }) {
     schema,
     handlers: {
       handleEdit: (item: z.infer<typeof schema>) => {
-        updateMutation.mutate(item);
+        updateMutation.mutate({ ...item, availability: [] });
       },
       handleDelete: (item) => {
         deleteMutation.mutate({ id: item.id });
@@ -102,6 +104,10 @@ export default function RoomsPage({ userId }: { userId: string }) {
       label="Room"
       tableProps={{ columns, data }}
       actions={actions}
+      createFormProps={{
+        schema,
+        onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
+      }}
     />
   );
 }
