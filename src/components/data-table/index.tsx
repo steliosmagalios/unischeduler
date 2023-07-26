@@ -46,7 +46,7 @@ export default function DataTable<TData extends { id: number }, TValue>(
   return (
     <div className="flex h-full w-full flex-col overflow-y-hidden rounded-md border">
       <div className="flex-grow overflow-y-auto ">
-        <Table className="">
+        <Table>
           <TableHeader className="sticky top-0 bg-background">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
