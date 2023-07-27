@@ -3,9 +3,9 @@ import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
-import { useRowActions } from "~/components/data-table/row-actions";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
+import { useRowActions } from "~/components/resource-layout/row-actions";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
