@@ -97,7 +97,10 @@ export function useRowActions<TData extends { id: number }>(
                 defaultValues={item}
                 onSubmit={(data) => props.handlers.handleEdit(data, item.id)}
                 renderAfter={() => (
-                  <div className="mt-3 flex justify-end">
+                  <div className="mt-3 flex justify-end space-x-2">
+                    <DialogClose asChild>
+                      <Button variant="ghost">Close</Button>
+                    </DialogClose>
                     <Button type="submit">Update</Button>
                   </div>
                 )}
