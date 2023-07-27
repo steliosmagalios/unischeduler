@@ -4,7 +4,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
 import { useRowActions } from "~/components/data-table/row-actions";
-import { LoadingPage } from "~/components/loader";
+import { LoadingPage, LoadingSpinner } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
@@ -78,7 +78,7 @@ export default function CoursesPage({ userId }: { userId: string }) {
   const actions = useRowActions<Course>({
     label: "Course",
     schema,
-    viewComponent: () => null,
+    viewComponent: ViewCourse,
     handlers: {
       handleEdit(data: z.infer<typeof schema>, id) {
         updateMutation.mutate({ id, data });
@@ -104,5 +104,19 @@ export default function CoursesPage({ userId }: { userId: string }) {
         onSubmit: (data: z.infer<typeof schema>) => createMutation.mutate(data),
       }}
     />
+  );
+}
+
+function ViewCourse(props: { item: Course }) {
+  const lectures = api.course.getLectures.useQuery({ id: props.item.id });
+
+  if (lectures.isLoading || lectures.data === undefined) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <pre>
+      {JSON.stringify({ ...props.item, lectures: lectures.data }, null, 2)}
+    </pre>
   );
 }

@@ -38,6 +38,14 @@ export const courseRouter = createTRPCRouter({
     });
   }),
 
+  getLectures: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.lecture.findMany({
+        where: { courseId: input.id },
+      });
+    }),
+
   create: adminOnlyProcedure
     .input(baseCourseSchema)
     .mutation(({ ctx, input }) => {
