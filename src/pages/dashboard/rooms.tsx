@@ -85,8 +85,8 @@ export default function RoomsPage({ userId }: { userId: string }) {
     viewComponent: Test,
     schema,
     handlers: {
-      handleEdit: (item: z.infer<typeof schema>) => {
-        updateMutation.mutate({ ...item, availability: [] });
+      handleEdit: (item: z.infer<typeof schema>, id) => {
+        updateMutation.mutate({ id, data: { ...item, availability: [] } });
       },
       handleDelete: (item) => {
         deleteMutation.mutate({ id: item.id });

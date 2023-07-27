@@ -48,10 +48,27 @@ export const roomRouter = createTRPCRouter({
     }),
 
   update: adminOnlyProcedure
-    .input(baseRoomSchema.extend({ availability: z.array(z.number()) }))
-    .mutation(() => {
-      throw new TRPCError({
-        code: "FORBIDDEN",
+    .input(
+      z.object({
+        id: z.number(),
+        data: baseRoomSchema.extend({ availability: z.array(z.number()) }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check if item exists
+      if (
+        (await ctx.prisma.room.findFirst({ where: { id: input.id } })) === null
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Room with id "${input.id}" was not found`,
+        });
+      }
+
+      // Update
+      return ctx.prisma.room.update({
+        where: { id: input.id },
+        data: input.data,
       });
     }),
 
