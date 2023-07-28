@@ -3,6 +3,7 @@ import { type Group } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import ManageOverlapsDialog from "~/components/dialogs/manage-overlaps-dialog";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
@@ -60,8 +61,10 @@ export default function GroupsPage({ userId }: { userId: string }) {
     onSuccess: () => void ctx.group.invalidate(),
   });
 
+  const { data: groupData } = api.group.getAll.useQuery();
+
   const actions = useRowActions<Group>({
-    label: "Course",
+    label: "Group",
     schema,
     viewComponent: () => null,
     handlers: {
@@ -72,6 +75,15 @@ export default function GroupsPage({ userId }: { userId: string }) {
         deleteMutation.mutate({ id: item.id });
       },
     },
+    additionalActions: [
+      {
+        render(key, item) {
+          return (
+            <ManageOverlapsDialog key={key} id={item.id} groups={groupData} />
+          );
+        },
+      },
+    ],
   });
 
   if (isLoading || data === undefined) {

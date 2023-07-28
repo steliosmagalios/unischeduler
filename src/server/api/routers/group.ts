@@ -32,6 +32,30 @@ export const groupRouter = createTRPCRouter({
     return ctx.prisma.group.findMany();
   }),
 
+  getOverlapping: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const group = await ctx.prisma.group.findFirst({
+        where: { id: input.id },
+        select: {
+          overlapping: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (group === null) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "The requested group wasn't found",
+        });
+      }
+
+      return group.overlapping.flatMap((i) => i.id);
+    }),
+
   create: adminOnlyProcedure
     .input(baseGroupProps)
     .mutation(async ({ ctx, input }) => {
@@ -68,6 +92,19 @@ export const groupRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           name: input.data.name,
+        },
+      });
+    }),
+
+  updateOverlaps: adminOnlyProcedure
+    .input(z.object({ id: z.number(), data: z.array(z.number()) }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.group.update({
+        where: { id: input.id },
+        data: {
+          overlapping: {
+            set: input.data.map((id) => ({ id })),
+          },
         },
       });
     }),
