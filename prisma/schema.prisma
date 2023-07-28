@@ -28,6 +28,8 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    Lecture   Lecture? @relation(fields: [lectureId], references: [id])
+    lectureId Int?
 }
 
 enum UserRole {
@@ -48,11 +50,12 @@ model Course {
 }
 
 model Lecture {
-    id       Int      @id @default(autoincrement())
-    name     String
-    type     RoomType
-    duration Int      @db.SmallInt
-    groups   Group[]
+    id         Int      @id @default(autoincrement())
+    name       String
+    type       RoomType
+    duration   Int      @db.SmallInt
+    professors User[]
+    groups     Group[]
 
     Course   Course @relation(fields: [courseId], references: [id])
     courseId Int

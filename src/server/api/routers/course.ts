@@ -12,6 +12,14 @@ const baseCourseSchema = z.object({
   semester: z.number().min(0).max(8),
 });
 
+const baseLectureSchema = z.object({
+  name: z.string(),
+  duration: z.number(),
+  type: z.enum(["Auditorium", "Laboratory"]),
+  professors: z.array(z.number()),
+  groups: z.array(z.number()),
+});
+
 export const courseRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.number() }))
@@ -40,9 +48,40 @@ export const courseRouter = createTRPCRouter({
 
   getLectures: publicProcedure
     .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       return ctx.prisma.lecture.findMany({
         where: { courseId: input.id },
+        include: {
+          professors: {
+            select: {
+              id: true,
+            },
+          },
+          groups: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+    }),
+
+  updateLecture: adminOnlyProcedure
+    .input(z.object({ id: z.number(), data: baseLectureSchema }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.lecture.update({
+        where: { id: input.id },
+        data: {
+          name: input.data.name,
+          duration: input.data.duration,
+          type: input.data.type,
+          professors: {
+            set: input.data.professors.map((p) => ({ id: p })),
+          },
+          groups: {
+            set: input.data.groups.map((g) => ({ id: g })),
+          },
+        },
       });
     }),
 

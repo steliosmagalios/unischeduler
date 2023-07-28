@@ -76,6 +76,9 @@ export default function CoursesPage({ userId }: { userId: string }) {
     onSuccess: () => void ctx.course.invalidate(),
   });
 
+  const groups = api.group.getAll.useQuery();
+  const professors = api.user.getProfessors.useQuery();
+
   const actions = useRowActions<Course>({
     label: "Course",
     schema,
@@ -91,7 +94,14 @@ export default function CoursesPage({ userId }: { userId: string }) {
     additionalActions: [
       {
         render(key, item) {
-          return <ManageLecturesDialog key={key} />;
+          return (
+            <ManageLecturesDialog
+              key={key}
+              id={item.id}
+              groups={groups.data}
+              professors={professors.data}
+            />
+          );
         },
       },
     ],

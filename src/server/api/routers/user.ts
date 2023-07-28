@@ -35,6 +35,12 @@ export const userRouter = createTRPCRouter({
     return ctx.prisma.user.findMany();
   }),
 
+  getProfessors: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findMany({
+      where: { role: "Professor" },
+    });
+  }),
+
   create: adminOnlyProcedure
     .input(baseUserSchema)
     .mutation(({ ctx, input }) => {
