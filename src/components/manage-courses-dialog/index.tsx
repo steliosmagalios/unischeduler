@@ -58,7 +58,10 @@ export default function ManageCoursesDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="min-w-[80%]">
+      <DialogContent
+        className="min-w-[80%]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Manage Courses</DialogTitle>
         </DialogHeader>
