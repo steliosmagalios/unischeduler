@@ -63,6 +63,26 @@ export const courseRouter = createTRPCRouter({
             },
           },
         },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+    }),
+
+  createLecture: adminOnlyProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.lecture.create({
+        data: {
+          name: "New Lecture",
+          duration: 1,
+          type: "Auditorium",
+          Course: {
+            connect: {
+              id: input.id,
+            },
+          },
+        },
       });
     }),
 
@@ -83,6 +103,19 @@ export const courseRouter = createTRPCRouter({
           },
         },
       });
+    }),
+
+  deleteLecture: adminOnlyProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.lecture.delete({ where: { id: input.id } });
+      } catch {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Lecture not found",
+        });
+      }
     }),
 
   create: adminOnlyProcedure
