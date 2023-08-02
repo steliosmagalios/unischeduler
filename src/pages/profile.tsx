@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { LoadingPage } from "~/components/loader";
 import ManageCoursesDialog from "~/components/manage-courses-dialog";
 import Timetable from "~/components/timetable";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,7 +78,15 @@ export default function Profile({ userId }: { userId: string }) {
                   {userData.firstName?.toLocaleLowerCase()}
                 </span>
               </p>
-              <AvatarMenu canAccessDashboard={userData.role === "Admin"} />
+              <AvatarMenu
+                canAccessDashboard={userData.role === "Admin"}
+                avatarUrl={userData.imageUrl}
+                fallback={
+                  `${userData.firstName?.[0] ?? ""}${
+                    userData.lastName?.[0] ?? ""
+                  }` ?? undefined
+                }
+              />
             </div>
           </div>
         </header>
@@ -144,6 +152,8 @@ function LectureCard(props: LectureCardProps) {
 
 type AvatarMenuProps = {
   canAccessDashboard: boolean;
+  avatarUrl: string | null;
+  fallback?: string;
 };
 
 function AvatarMenu(props: AvatarMenuProps) {
@@ -154,7 +164,8 @@ function AvatarMenu(props: AvatarMenuProps) {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarFallback>SM</AvatarFallback>
+          <AvatarImage src={props.avatarUrl ?? undefined} />
+          <AvatarFallback>{props.fallback ?? "U"}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
