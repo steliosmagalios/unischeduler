@@ -1,12 +1,25 @@
-import { SignOutButton } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { buildClerkProps } from "@clerk/nextjs/server";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
+import { useTheme } from "next-themes";
 import Head from "next/head";
 import Link from "next/link";
+import { useMemo } from "react";
 import { LoadingPage } from "~/components/loader";
 import ManageCoursesDialog from "~/components/manage-courses-dialog";
 import Timetable from "~/components/timetable";
-import UserCard from "~/components/user-card";
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -30,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const dummyCourse = {
-  name: "Course Name (Dummy)",
+  title: "Course Name (Dummy)",
   startTime: 18,
   duration: 3,
   room: "Aud 13",
@@ -59,14 +72,13 @@ export default function Profile({ userId }: { userId: string }) {
             <h1 className="text-4xl font-bold">UniScheduler</h1>
 
             <div className="flex items-center gap-2">
-              {userData.role === "Admin" && (
-                <Link className="font-semibold text-teal-300" href="/dashboard">
-                  Go to Dashboard
-                </Link>
-              )}
-              <span className="rounded-md bg-red-500 px-3 py-2 font-semibold">
-                <SignOutButton />
-              </span>
+              <p>
+                Welcome back,{" "}
+                <span className="capitalize">
+                  {userData.firstName?.toLocaleLowerCase()}
+                </span>
+              </p>
+              <AvatarMenu canAccessDashboard={userData.role === "Admin"} />
             </div>
           </div>
         </header>
@@ -74,26 +86,14 @@ export default function Profile({ userId }: { userId: string }) {
         <main className="container mx-auto grid h-full flex-grow grid-cols-12 gap-4 overflow-hidden">
           {/* User card and daily schedule */}
           <div className="col-span-3 flex h-full flex-col gap-4 overflow-hidden">
-            {/* User card */}
-            <UserCard user={userData} />
-
             {/* Daily schedule */}
             <div className="flex flex-grow flex-col gap-2 overflow-hidden">
-              <div>
-                <h2 className="text-lg font-semibold">{"Today's courses"}</h2>
-                <hr />
-              </div>
+              <h2 className="text-center text-2xl font-semibold">
+                Today&apos;s Courses
+              </h2>
               <div className="flex flex-grow flex-col gap-2 overflow-auto">
                 {Array.from(Array(7)).map((_, idx) => (
-                  <div key={idx} className="rounded-sm bg-indigo-700 p-2">
-                    <p className="text-xl font-semibold">{dummyCourse.name}</p>
-                    <p className="text-sm italic text-gray-300">
-                      {dummyCourse.room}{" "}
-                      <span className="font-bold">&#8226;</span>{" "}
-                      {dummyCourse.startTime}:00 -{" "}
-                      {dummyCourse.startTime + dummyCourse.duration}:00
-                    </p>
-                  </div>
+                  <LectureCard key={idx} {...dummyCourse} />
                 ))}
               </div>
             </div>
@@ -112,5 +112,82 @@ export default function Profile({ userId }: { userId: string }) {
         </main>
       </div>
     </>
+  );
+}
+
+type LectureCardProps = {
+  title: string;
+  room: string;
+  startTime: number;
+  duration: number;
+};
+
+function LectureCard(props: LectureCardProps) {
+  const { startTime, duration } = props;
+  const formattedTime = useMemo(
+    () =>
+      `${startTime.toString().padStart(2, "0")}:00 - ${(startTime + duration)
+        .toString()
+        .padStart(2, "0")}:00`,
+    [startTime, duration]
+  );
+
+  return (
+    <div className="rounded-sm border bg-slate-900 p-3">
+      <p className="text-xl font-semibold line-clamp-1">{props.title}</p>
+      <p className="text-sm italic text-gray-300">
+        {props.room} <span className="font-bold">&#8226;</span> {formattedTime}
+      </p>
+    </div>
+  );
+}
+
+type AvatarMenuProps = {
+  canAccessDashboard: boolean;
+};
+
+function AvatarMenu(props: AvatarMenuProps) {
+  const { theme, setTheme } = useTheme();
+  const clerk = useClerk();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Avatar>
+          <AvatarFallback>SM</AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="w-56">
+        {props.canAccessDashboard && (
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuLabel>Theme</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+          <DropdownMenuRadioItem value="light" className="flex gap-2">
+            <SunIcon className="h-4 w-4" />
+            Light
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark" className="flex gap-2">
+            <MoonIcon className="h-4 w-4" />
+            Dark
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() => void clerk.signOut()}
+        >
+          Sign Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
