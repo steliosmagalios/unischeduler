@@ -1,6 +1,6 @@
 import { type Group, type User } from "@prisma/client";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { Clipboard } from "lucide-react";
+import { Clipboard, TrashIcon } from "lucide-react";
 import { useMemo } from "react";
 import { z } from "zod";
 import CustomForm from "~/components/form/custom-form";
@@ -68,6 +68,20 @@ export default function ManageLecturesDialog(props: ManageLecturesDialogProps) {
     });
   }
 
+  function handleDelete(id: number) {
+    const t = toast({
+      title: "Deleting Lecture",
+      description: "Deleting Lecture, please wait",
+      duration: 0,
+    });
+    deleteLecture.mutate({ id });
+    t.update({
+      id: t.id,
+      description: "Lecture deleted successfully",
+      duration: 1000,
+    });
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -100,9 +114,16 @@ export default function ManageLecturesDialog(props: ManageLecturesDialogProps) {
                     renderAfter={(vars) => (
                       <>
                         <hr className="mb-2" />
-                        <div className="flex flex-row-reverse gap-2">
+                        <div className="flex flex-row-reverse justify-between gap-2">
                           <Button size="sm" onClick={() => vars.submit()}>
                             Save
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDelete(item.id)}
+                          >
+                            <TrashIcon className="h-4 w-4" />
                           </Button>
                         </div>
                       </>
@@ -112,6 +133,10 @@ export default function ManageLecturesDialog(props: ManageLecturesDialogProps) {
               );
             })}
           </div>
+        )}
+
+        {!loadingData && lectures.data?.length === 0 && (
+          <div className="text-center text-xl">No Lectures</div>
         )}
 
         <DialogFooter>
