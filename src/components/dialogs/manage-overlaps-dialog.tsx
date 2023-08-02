@@ -1,14 +1,14 @@
 import { type Group } from "@prisma/client";
 import { DialogClose } from "@radix-ui/react-dialog";
 import {
-  RowSelectionState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type RowSelectionState,
 } from "@tanstack/react-table";
-import { Clipboard } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { UsersIcon } from "lucide-react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { LoadingSpinner } from "~/components/loader";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
@@ -80,14 +80,14 @@ export default function ManageOverlapsDialog(props: ManageOverlapsDialogProps) {
       <DialogTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <Clipboard className="h-4 w-4" />
+          <UsersIcon className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
         className="flex max-h-[90%] min-w-[50%] flex-col"
       >
-        <DialogTitle>Manage Lectures</DialogTitle>
+        <DialogTitle>Manage Group Overlaps</DialogTitle>
 
         {!props.groups || currentGroup.isLoading ? (
           <div className="translate-x-[50%] translate-y-[50%]">
