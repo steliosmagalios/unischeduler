@@ -1,8 +1,7 @@
-import { SignOutButton } from "@clerk/nextjs";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import DashboardMenu from "~/components/dashboard-layout/dashboard-menu";
 import { LoadingPage } from "~/components/loader";
 import { api } from "~/utils/api";
 import { capitalize } from "~/utils/lib";
@@ -76,16 +75,9 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
             ))}
           </nav>
 
-          <div>
+          <div className="flex items-center justify-between">
             <UserCard user={userData} />
-            <div className="flex justify-evenly gap-2">
-              <Link href="/profile" className="text-blue-500">
-                Profile
-              </Link>
-              <span className="text-red-500">
-                <SignOutButton />
-              </span>
-            </div>
+            <DashboardMenu />
           </div>
         </aside>
 
