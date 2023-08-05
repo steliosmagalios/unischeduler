@@ -51,25 +51,28 @@ type PageProps = {
 export default function EditLecturesPage(props: PageProps) {
   const ctx = api.useContext();
   const { toast } = useToast();
-  const lectures = api.course.getLectures.useQuery({
-    id: props.courseId,
-  });
-  const professors = api.user.getProfessors.useQuery();
-  const groups = api.group.getAll.useQuery();
+  const { data: lectures, isLoading: lecturesLoading } =
+    api.course.getLectures.useQuery({
+      id: props.courseId,
+    });
+  const { data: professors, isLoading: professorsLoading } =
+    api.user.getProfessors.useQuery();
+  const { data: groups, isLoading: groupsLoading } =
+    api.group.getAll.useQuery();
 
   const createLecture = api.course.createLecture.useMutation({
     onSuccess: () => ctx.course.getLectures.invalidate(),
   });
 
   if (
-    lectures.isLoading ||
-    lectures.data === undefined ||
-    professors.isLoading ||
-    professors.data === undefined ||
-    groups.isLoading ||
-    groups.data === undefined
+    lecturesLoading ||
+    lectures === undefined ||
+    professorsLoading ||
+    professors === undefined ||
+    groupsLoading ||
+    groups === undefined
   ) {
-    <LoadingPage />;
+    return <LoadingPage />;
   }
 
   function handleAddNew() {
@@ -98,18 +101,18 @@ export default function EditLecturesPage(props: PageProps) {
       <h2 className="text-3xl font-semibold">Lectures</h2>
       <div className="flex-grow overflow-auto">
         <div className="grid grid-cols-3 gap-2">
-          {lectures.data?.map((item) => (
+          {lectures.map((item) => (
             <LectureCard
               key={item.id}
               data={item}
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              professors={professors.data!}
+              professors={professors}
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              groups={groups.data!}
+              groups={groups}
             />
           ))}
 
-          {lectures.data?.length === 0 && (
+          {lectures.length === 0 && (
             <span className="col-span-full text-center text-xl">
               No lectures available
             </span>
