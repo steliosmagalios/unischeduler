@@ -30,10 +30,7 @@ export default function SelectInput() {
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Select
-              value={field.value ? field.value : ""}
-              onValueChange={field.onChange}
-            >
+            <Select value={field.value} onValueChange={field.onChange}>
               <SelectTrigger>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
