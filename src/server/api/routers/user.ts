@@ -74,6 +74,25 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  updateAvailability: adminOnlyProcedure
+    .input(z.object({ id: z.number(), data: z.array(z.number()) }))
+    .mutation(async ({ ctx, input }) => {
+      // Check if item exists
+      if (
+        (await ctx.prisma.user.findFirst({ where: { id: input.id } })) === null
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Group with id "${input.id}" was not found`,
+        });
+      }
+
+      return ctx.prisma.user.update({
+        where: { id: input.id },
+        data: { availability: input.data },
+      });
+    }),
+
   delete: adminOnlyProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {

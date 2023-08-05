@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import Head from "next/head";
 import Link from "next/link";
 import { useMemo } from "react";
+import AvailabilityDialog from "~/components/availability-dialog";
 import { LoadingPage } from "~/components/loader";
 import ManageCoursesDialog from "~/components/manage-courses-dialog";
 import Timetable from "~/components/timetable";
@@ -92,8 +93,15 @@ export default function Profile({ userId }: { userId: string }) {
         </header>
 
         <main className="container mx-auto grid h-full flex-grow grid-cols-12 gap-4 overflow-hidden">
-          {/* User card and daily schedule */}
+          {/* Availability and daily schedule */}
           <div className="col-span-3 flex h-full flex-col gap-4 overflow-hidden">
+            {userData.role === "Professor" && (
+              <AvailabilityDialog
+                externalId={userId}
+                userId={userData.id}
+                initialValues={userData.availability}
+              />
+            )}
             {/* Daily schedule */}
             <div className="flex flex-grow flex-col gap-2 overflow-hidden">
               <h2 className="text-center text-2xl font-semibold">
