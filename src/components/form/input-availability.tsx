@@ -4,6 +4,7 @@ import TimeGrid from "~/components/time-grid";
 import { Button } from "~/components/ui/button";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,7 +14,7 @@ import { DAYS, TIMESLOTS } from "~/utils/constants";
 export default function AvailabilityInput() {
   const ctx = useFormContext();
   const { field } = useTsController<Array<number>>();
-  const { label } = useDescription();
+  const { label, placeholder } = useDescription();
 
   function handleSelectAll() {
     field.onChange(
@@ -72,6 +73,7 @@ export default function AvailabilityInput() {
               </div>
             </>
           </FormControl>
+          <FormDescription>{placeholder}</FormDescription>
         </FormItem>
       )}
     />

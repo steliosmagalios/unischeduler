@@ -46,15 +46,16 @@ function TimeRow(props: TimeRowProps) {
   );
 
   return (
-    <div className="col-span-11 flex justify-evenly self-stretch overflow-hidden rounded-md ">
+    <div className="col-span-11 flex justify-evenly self-stretch overflow-hidden rounded-md border ">
       {TIMESLOTS.map((timeslot) => (
         <button
           disabled={props.disabled}
           type="button"
           key={timeslot}
           className={cn(
-            isEnabled(timeslot) && "bg-blue-500 text-white",
-            "flex h-8 w-full items-center justify-center enabled:hover:bg-red-500 disabled:cursor-default"
+            "flex h-8 w-full items-center justify-center enabled:hover:bg-blue-500 disabled:cursor-default",
+            isEnabled(timeslot) &&
+              "bg-blue-500 text-white enabled:hover:bg-red-500"
           )}
           onClick={() => props.onClick?.(timeslot - 7 + props.offset)}
         >

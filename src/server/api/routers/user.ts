@@ -11,6 +11,7 @@ const baseUserSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   role: z.enum(["User", "Professor", "Admin"]),
+  availability: z.array(z.number()),
 });
 
 export const userRouter = createTRPCRouter({

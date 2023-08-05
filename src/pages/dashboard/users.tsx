@@ -3,6 +3,7 @@ import { type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import { AvilabilitySchema } from "~/components/form/custom-form";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
@@ -69,6 +70,9 @@ const schema = z.object({
   role: z
     .enum(["Admin", "Professor", "User"])
     .describe("Role // The user's role"), // Sync with prisma type
+  availability: AvilabilitySchema.describe(
+    "Availability // Availability is only relevant for professors"
+  ),
 });
 
 export default function UsersPage({ userId }: { userId: string }) {
