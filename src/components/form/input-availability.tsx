@@ -11,6 +11,10 @@ import {
 } from "~/components/ui/form";
 import { DAYS, TIMESLOTS } from "~/utils/constants";
 
+function numberComparator(a: number, b: number) {
+  return a - b;
+}
+
 export default function AvailabilityInput() {
   const ctx = useFormContext();
   const { field } = useTsController<Array<number>>();
@@ -29,13 +33,15 @@ export default function AvailabilityInput() {
   function handleSlotClick(timeslot: number) {
     if (field.value?.includes(timeslot)) {
       field.onChange(
-        field.value?.filter((slot) => slot !== timeslot).sort() ?? []
+        field.value
+          ?.filter((slot) => slot !== timeslot)
+          .sort(numberComparator) ?? []
       );
 
       return;
     }
 
-    field.onChange([...(field.value ?? []), timeslot].sort());
+    field.onChange([...(field.value ?? []), timeslot].sort(numberComparator));
   }
 
   return (
