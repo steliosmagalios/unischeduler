@@ -1,6 +1,6 @@
 import { useClerk } from "@clerk/nextjs";
 import { buildClerkProps } from "@clerk/nextjs/server";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { LayoutDashboardIcon, MoonIcon, SunIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
 import Head from "next/head";
@@ -173,7 +173,10 @@ function AvatarMenu(props: AvatarMenuProps) {
         {props.canAccessDashboard && (
           <>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/dashboard" className="flex gap-2">
+                <LayoutDashboardIcon className="h-4 w-4" />
+                Dashboard
+              </Link>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

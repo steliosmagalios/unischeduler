@@ -1,5 +1,5 @@
 import { useClerk } from "@clerk/nextjs";
-import { MoonIcon, MoreVerticalIcon, SunIcon } from "lucide-react";
+import { MoonIcon, MoreVerticalIcon, SunIcon, UserIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
@@ -28,7 +28,9 @@ export default function DashboardMenu() {
 
       <DropdownMenuContent align="end" sideOffset={12} className="w-56">
         <DropdownMenuItem asChild>
-          <Link href="/profile">Profile</Link>
+          <Link href="/profile" className="flex gap-2">
+            <UserIcon className="h-4 w-4" /> Profile
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
