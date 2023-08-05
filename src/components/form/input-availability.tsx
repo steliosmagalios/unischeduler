@@ -1,20 +1,23 @@
-import { useTsController } from "@ts-react/form";
-import { useCallback } from "react";
+import { useDescription, useTsController } from "@ts-react/form";
+import { useFormContext } from "react-hook-form";
+import TimeGrid from "~/components/time-grid";
 import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { cn } from "~/utils/shad-utils";
-
-const dayInititals = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "~/components/ui/form";
+import { DAYS, TIMESLOTS } from "~/utils/constants";
 
 export default function AvailabilityInput() {
+  const ctx = useFormContext();
   const { field } = useTsController<Array<number>>();
+  const { label } = useDescription();
 
   function handleSelectAll() {
     field.onChange(
-      Array.from(
-        { length: dayInititals.length * timeslots.length },
-        (_, i) => i + 1
-      )
+      Array.from({ length: DAYS.length * TIMESLOTS.length }, (_, i) => i + 1)
     );
   }
 
@@ -35,77 +38,42 @@ export default function AvailabilityInput() {
   }
 
   return (
-    <div>
-      <Label>Availability</Label>
-      <div className="mt-2 flex flex-col gap-2 rounded-md border p-2">
-        {dayInititals.map((day, idx) => (
-          <div key={day} className="grid grid-cols-12 items-center gap-2">
-            <span className="col-span-1 text-right">{day}</span>
-            <Row
-              onClick={handleSlotClick}
-              data={
-                field.value?.filter(
-                  (i) => Math.floor((i - 1) / timeslots.length) === idx
-                ) ?? []
-              }
-              offset={idx * timeslots.length}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="mt-1 flex flex-row-reverse gap-2">
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={handleSelectAll}
-        >
-          Select All
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={handleSelectNone}
-        >
-          Select None
-        </Button>
-      </div>
-    </div>
-  );
-}
+    <FormField
+      control={ctx.control}
+      name={field.name}
+      render={() => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <>
+              <TimeGrid
+                value={field.value ?? []}
+                onClick={handleSlotClick}
+                className="rounded-md border p-2"
+              />
 
-const timeslots = [
-  8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-] as const;
-
-type RowProps = {
-  data: Array<number>;
-  offset: number;
-  onClick?: (timeslot: number) => void;
-};
-
-function Row(props: RowProps) {
-  const isEnabled = useCallback(
-    (timeslot: number) => props.data.includes(timeslot - 7 + props.offset),
-    [props.data, props.offset]
-  );
-
-  return (
-    <div className="col-span-11 flex justify-evenly self-stretch overflow-hidden rounded-md ">
-      {timeslots.map((timeslot) => (
-        <button
-          type="button"
-          key={timeslot}
-          className={cn(
-            isEnabled(timeslot) && "bg-blue-500 text-white",
-            `flex h-8 w-full items-center justify-center hover:bg-red-500`
-          )}
-          onClick={() => props.onClick?.(timeslot - 7 + props.offset)}
-        >
-          {timeslot}
-        </button>
-      ))}
-    </div>
+              <div className="mt-1 flex flex-row-reverse gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleSelectAll}
+                >
+                  Select All
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleSelectNone}
+                >
+                  Select None
+                </Button>
+              </div>
+            </>
+          </FormControl>
+        </FormItem>
+      )}
+    />
   );
 }

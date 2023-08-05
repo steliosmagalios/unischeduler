@@ -68,7 +68,7 @@ const schema = z.object({
     .enum(["Auditorium", "Laboratory"])
     .describe("Type // Type of the room"),
   capacity: z.number().describe("Capacity // Capacity of the room"),
-  availability: AvilabilitySchema,
+  availability: AvilabilitySchema.describe("Availability"),
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {
