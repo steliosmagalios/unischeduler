@@ -108,6 +108,12 @@ export default function EditLecturesPage(props: PageProps) {
               groups={groups.data!}
             />
           ))}
+
+          {lectures.data?.length === 0 && (
+            <span className="col-span-full text-center text-xl">
+              No lectures available
+            </span>
+          )}
         </div>
       </div>
       <div className="flex flex-row-reverse gap-2">
