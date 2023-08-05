@@ -12,7 +12,10 @@ export default function ActionButton(props: ActionButtonProps) {
   return (
     <Dialog {...dialogProps}>
       <DialogTrigger asChild>{triggerChildren}</DialogTrigger>
-      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className="max-h-[95%] overflow-scroll"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         {children}
       </DialogContent>
     </Dialog>

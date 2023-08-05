@@ -1,5 +1,6 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Room } from "@prisma/client";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
@@ -7,6 +8,10 @@ import { AvailabilitySchema } from "~/components/form/custom-form";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import TimeGrid from "~/components/time-grid";
+import { Button } from "~/components/ui/button";
+import { DialogFooter, DialogTitle } from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -58,10 +63,6 @@ const columns: ColumnDef<Room>[] = [
   },
 ];
 
-function Test({ item }: { item: Room }) {
-  return <pre>{JSON.stringify(item, null, 2)}</pre>;
-}
-
 const schema = z.object({
   name: z.string().describe("Name // Name of the room"),
   type: z
@@ -86,7 +87,7 @@ export default function RoomsPage({ userId }: { userId: string }) {
 
   const actions = useRowActions<Room>({
     label: "Room",
-    viewComponent: Test,
+    viewComponent: RoomCard,
     schema,
     handlers: {
       handleEdit: (item: z.infer<typeof schema>, id) => {
@@ -113,5 +114,37 @@ export default function RoomsPage({ userId }: { userId: string }) {
         onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
       }}
     />
+  );
+}
+
+function RoomCard(props: { item: Room }) {
+  return (
+    <>
+      <DialogTitle>View Room</DialogTitle>
+
+      <div className="flex flex-col gap-2">
+        <div>
+          <p className="text-xl font-bold">{props.item.name}</p>
+          <p className="italic">
+            {props.item.type} - {props.item.capacity} seats
+          </p>
+        </div>
+
+        <div>
+          <Label>Availability</Label>
+          <TimeGrid
+            value={props.item.availability}
+            display
+            className="rounded-md border p-2"
+          />
+        </div>
+      </div>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Close</Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
   );
 }

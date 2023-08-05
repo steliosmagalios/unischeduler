@@ -1,5 +1,6 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type User } from "@prisma/client";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
@@ -7,6 +8,11 @@ import { AvailabilitySchema } from "~/components/form/custom-form";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import TimeGrid from "~/components/time-grid";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { DialogFooter, DialogTitle } from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -91,7 +97,7 @@ export default function UsersPage({ userId }: { userId: string }) {
   const actions = useRowActions<User>({
     label: "User",
     schema,
-    viewComponent: () => null,
+    viewComponent: UserCard,
     handlers: {
       handleEdit(data: z.infer<typeof schema>, id) {
         updateMutation.mutate({ id, data });
@@ -117,5 +123,40 @@ export default function UsersPage({ userId }: { userId: string }) {
         onSubmit: (data: z.infer<typeof schema>) => createMutation.mutate(data),
       }}
     />
+  );
+}
+
+function UserCard(props: { item: User }) {
+  return (
+    <>
+      <DialogTitle>View User</DialogTitle>
+
+      <div className="flex flex-col gap-2">
+        <div>
+          <p className="text-xl font-bold">
+            {props.item.firstName} {props.item.lastName}
+          </p>
+          <Badge className="self-start">{props.item.role}</Badge>
+        </div>
+
+        <p>
+          <span className="font-semibold">E-mail:</span> {props.item.email}
+        </p>
+
+        <div>
+          <Label>Availability</Label>
+          <TimeGrid
+            className="rounded-md border p-2"
+            value={props.item.availability}
+            display
+          />
+        </div>
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Close</Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
   );
 }

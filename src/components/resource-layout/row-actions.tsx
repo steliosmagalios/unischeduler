@@ -71,10 +71,7 @@ export function useRowActions<TData extends { id: number }>(
                 </Button>
               }
             >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, ex?
-              Facere eveniet autem mollitia, labore deserunt sequi, earum vero,
-              praesentium molestias blanditiis sunt obcaecati reiciendis magnam
-              quia iusto non? Enim!
+              <props.viewComponent item={item} />
             </ActionButton>
           );
         },
