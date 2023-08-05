@@ -24,6 +24,7 @@ const navRoutes = [
   {
     href: "/dashboard/courses",
     label: "Courses",
+    hasSubroutes: true,
   },
   {
     href: "/dashboard/groups",
@@ -70,7 +71,9 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
               <NavLink
                 key={route.href}
                 {...route}
-                active={(() => router.asPath === route.href)()}
+                active={(() =>
+                  router.asPath === route.href ||
+                  (route.hasSubroutes && router.asPath.includes(route.href)))()}
               />
             ))}
           </nav>

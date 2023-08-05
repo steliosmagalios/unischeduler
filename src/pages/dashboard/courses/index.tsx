@@ -1,12 +1,14 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Course } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
+import { Clipboard } from "lucide-react";
 import { type GetServerSideProps } from "next";
+import Link from "next/link";
 import { z } from "zod";
-import ManageLecturesDialog from "~/components/dialogs/manage-lectures-dialog";
 import { LoadingPage, LoadingSpinner } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import { Button } from "~/components/ui/button";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -95,12 +97,12 @@ export default function CoursesPage({ userId }: { userId: string }) {
       {
         render(key, item) {
           return (
-            <ManageLecturesDialog
-              key={key}
-              id={item.id}
-              groups={groups.data}
-              professors={professors.data}
-            />
+            <Button key={key} asChild variant="ghost" className="h-8 w-8 p-0">
+              <Link href={`/dashboard/courses/lectures?id=${item.id}`}>
+                <span className="sr-only">Open menu</span>
+                <Clipboard className="h-4 w-4" />
+              </Link>
+            </Button>
           );
         },
       },
