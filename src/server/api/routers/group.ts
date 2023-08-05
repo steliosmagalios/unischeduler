@@ -8,6 +8,7 @@ import {
 
 const baseGroupProps = z.object({
   name: z.string(),
+  size: z.number(),
 });
 
 export const groupRouter = createTRPCRouter({
@@ -90,9 +91,7 @@ export const groupRouter = createTRPCRouter({
       // Update
       return ctx.prisma.group.update({
         where: { id: input.id },
-        data: {
-          name: input.data.name,
-        },
+        data: input.data,
       });
     }),
 

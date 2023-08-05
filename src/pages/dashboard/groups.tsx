@@ -42,10 +42,21 @@ const columns: ColumnDef<Group>[] = [
     accessorKey: "name",
     header: "Name",
   },
+  {
+    accessorKey: "size",
+    header: () => <div className="text-center">Size</div>,
+    cell: ({ row }) => (
+      <div className="text-center">{row.renderValue("size")}</div>
+    ),
+  },
 ];
 
 const schema = z.object({
   name: z.string().nonempty().describe("Name // Name of the group"),
+  size: z
+    .number()
+    .min(1, "Group size needs to be at least 1")
+    .describe("Size // The size of the group"),
 });
 
 export default function GroupsPage({ userId }: { userId: string }) {
