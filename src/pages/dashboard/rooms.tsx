@@ -3,6 +3,7 @@ import { type Room } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
+import { AvilabilitySchema } from "~/components/form/custom-form";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
@@ -67,6 +68,7 @@ const schema = z.object({
     .enum(["Auditorium", "Laboratory"])
     .describe("Type // Type of the room"),
   capacity: z.number().describe("Capacity // Capacity of the room"),
+  availability: AvilabilitySchema,
 });
 
 export default function RoomsPage({ userId }: { userId: string }) {
@@ -88,7 +90,7 @@ export default function RoomsPage({ userId }: { userId: string }) {
     schema,
     handlers: {
       handleEdit: (item: z.infer<typeof schema>, id) => {
-        updateMutation.mutate({ id, data: { ...item, availability: [] } });
+        updateMutation.mutate({ id, data: { ...item } });
       },
       handleDelete: (item) => {
         deleteMutation.mutate({ id: item.id });
