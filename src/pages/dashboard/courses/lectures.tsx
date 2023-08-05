@@ -5,7 +5,7 @@ import { type GetServerSideProps } from "next";
 import Link from "next/link";
 import { z } from "zod";
 import DashboardLayout from "~/components/dashboard-layout";
-import CustomForm from "~/components/form/custom-form";
+import CustomForm, { MultiselectSchema } from "~/components/form/custom-form";
 import { LoadingPage } from "~/components/loader";
 import { Button } from "~/components/ui/button";
 import { useToast } from "~/components/ui/use-toast";
@@ -137,8 +137,8 @@ const lectureFormSchema = z.object({
   name: z.string().describe("Name // eg. Theory"),
   type: z.enum(["Auditorium", "Laboratory"]).describe("Type"),
   duration: z.number().describe("Duration // eg. 1"),
-  professors: z.array(z.number()),
-  groups: z.array(z.number()),
+  professors: MultiselectSchema.describe("Professors"),
+  groups: MultiselectSchema.describe("Groups"),
 });
 
 function LectureCard(props: LectureCardProps) {
@@ -192,7 +192,7 @@ function LectureCard(props: LectureCardProps) {
           groups: props.data.groups.map((i) => i.id),
         }}
         renderAfter={() => (
-          <div className="flex justify-between">
+          <div className="mt-2 flex justify-between">
             <Button
               type="button"
               variant="destructive"
@@ -206,6 +206,20 @@ function LectureCard(props: LectureCardProps) {
             <Button type="submit">Save</Button>
           </div>
         )}
+        props={{
+          professors: {
+            data: props.professors.map((i) => ({
+              value: i.id.toString(),
+              label: `${i.firstName ?? ""} ${i.lastName ?? ""}` ?? i.email,
+            })),
+          },
+          groups: {
+            data: props.groups.map((i) => ({
+              value: i.id.toString(),
+              label: i.name,
+            })),
+          },
+        }}
       />
     </div>
   );

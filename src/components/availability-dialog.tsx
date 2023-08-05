@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { z } from "zod";
-import CustomForm, { AvilabilitySchema } from "~/components/form/custom-form";
+import CustomForm, { AvailabilitySchema } from "~/components/form/custom-form";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
 import { api } from "~/utils/api";
 
 const availabilityUpdateSchema = z.object({
-  availability: AvilabilitySchema.describe("Availability"),
+  availability: AvailabilitySchema.describe("Availability"),
 });
 
 type Props = {
