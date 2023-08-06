@@ -41,6 +41,7 @@ const navRoutes = [
   {
     href: "/dashboard/timetables",
     label: "Timetables",
+    hasSubroutes: true,
   },
 ];
 

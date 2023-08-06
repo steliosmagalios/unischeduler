@@ -1,11 +1,16 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Timetable } from "@prisma/client";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { type ColumnDef } from "@tanstack/react-table";
+import { Calendar, ExternalLinkIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
+import Link from "next/link";
 import { z } from "zod";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import { Button } from "~/components/ui/button";
+import { DialogFooter, DialogTitle } from "~/components/ui/dialog";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -98,7 +103,7 @@ export default function TimetablesPage({ userId }: { userId: string }) {
   const actions = useRowActions<Timetable>({
     label: "Course",
     schema,
-    viewComponent: () => null,
+    viewComponent: TimetableCard,
     handlers: {
       handleEdit(data: z.infer<typeof schema>, id) {
         updateMutation.mutate({ id, data });
@@ -107,6 +112,20 @@ export default function TimetablesPage({ userId }: { userId: string }) {
         deleteMutation.mutate({ id: item.id });
       },
     },
+    additionalActions: [
+      {
+        render(key, item) {
+          return (
+            <Button key={key} asChild variant="ghost" className="h-8 w-8 p-0">
+              <Link href={`/dashboard/timetables/generate?id=${item.id}`}>
+                <span className="sr-only">Generate</span>
+                <Calendar className="h-4 w-4" />
+              </Link>
+            </Button>
+          );
+        },
+      },
+    ],
   });
 
   if (isLoading || data === undefined) {
@@ -124,5 +143,36 @@ export default function TimetablesPage({ userId }: { userId: string }) {
         onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
       }}
     />
+  );
+}
+
+function TimetableCard({ item }: { item: Timetable }) {
+  return (
+    <>
+      <DialogTitle>View Timetable</DialogTitle>
+
+      <div className="flex flex-col gap-2">
+        <p className="text-xl font-semibold">{item.name}</p>
+        <p className="text-sm italic text-muted-foreground">
+          {item.semester} {!item.published && "(published)"}
+        </p>
+
+        {item.generated ? (
+          <Button asChild>
+            <Link href={`/dashboard/timetables/view?id=${item.id}`}>
+              View Timetable <ExternalLinkIcon className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        ) : (
+          <p className="text-center">This timetable is not generated yet</p>
+        )}
+      </div>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Close</Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
   );
 }
