@@ -1,5 +1,6 @@
 import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Group } from "@prisma/client";
+import { DialogClose } from "@radix-ui/react-dialog";
 import { type ColumnDef } from "@tanstack/react-table";
 import { type GetServerSideProps } from "next";
 import { z } from "zod";
@@ -7,6 +8,8 @@ import ManageOverlapsDialog from "~/components/dialogs/manage-overlaps-dialog";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import { Button } from "~/components/ui/button";
+import { DialogFooter, DialogTitle } from "~/components/ui/dialog";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -77,7 +80,7 @@ export default function GroupsPage({ userId }: { userId: string }) {
   const actions = useRowActions<Group>({
     label: "Group",
     schema,
-    viewComponent: () => null,
+    viewComponent: GroupCard,
     handlers: {
       handleEdit(data: z.infer<typeof schema>, id) {
         updateMutation.mutate({ id, data });
@@ -112,5 +115,24 @@ export default function GroupsPage({ userId }: { userId: string }) {
         onSubmit: (item: z.infer<typeof schema>) => createMutation.mutate(item),
       }}
     />
+  );
+}
+
+function GroupCard({ item }: { item: Group }) {
+  return (
+    <>
+      <DialogTitle>View Group</DialogTitle>
+
+      <div>
+        <p className="text-lg font-semibold">{item.name}</p>
+        <p className="text-sm text-gray-500">{item.size} members</p>
+      </div>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Close</Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
   );
 }
