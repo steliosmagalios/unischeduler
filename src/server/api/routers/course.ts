@@ -55,11 +55,14 @@ export const courseRouter = createTRPCRouter({
           professors: {
             select: {
               id: true,
+              firstName: true,
+              lastName: true,
             },
           },
           groups: {
             select: {
               id: true,
+              name: true,
             },
           },
         },
