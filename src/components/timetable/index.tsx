@@ -1,3 +1,4 @@
+import { type Task, type Timetable } from "@prisma/client";
 import Slot from "~/components/timetable/slot";
 
 const daySlots = 14;
@@ -6,7 +7,9 @@ const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] as const;
 const TIMESLOTS = Array.from(Array(daySlots).keys()).map((i) => i + 8);
 
 type TimetableProps = {
-  //
+  timetable: Timetable & {
+    tasks: Task[];
+  };
 };
 
 const items: Record<(typeof DAYS)[number], Table> = {
@@ -18,7 +21,13 @@ const items: Record<(typeof DAYS)[number], Table> = {
 };
 
 export default function Timetable(props: TimetableProps) {
-  const {} = props;
+  const { timetable } = props;
+
+  return (
+    <div>
+      <pre>{JSON.stringify(timetable, null, 2)}</pre>
+    </div>
+  );
 
   return (
     <div className="grid grid-cols-6 gap-px overflow-hidden rounded-md">

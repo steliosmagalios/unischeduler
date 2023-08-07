@@ -26,10 +26,9 @@ model User {
 
     // Setup enrollment and groups
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    Lecture   Lecture? @relation(fields: [lectureId], references: [id])
-    lectureId Int?
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    lectures  Lecture[]
 }
 
 enum UserRole {
@@ -116,9 +115,9 @@ model Timetable {
 model Task {
     id        Int     @id @default(autoincrement())
     startTime Int     @db.SmallInt
-    lecture   Lecture @relation(fields: [lectureId], references: [id])
+    lecture   Lecture @relation(fields: [lectureId], references: [id], onDelete: Cascade)
     lectureId Int
-    room      Room    @relation(fields: [roomId], references: [id])
+    room      Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
     roomId    Int
 
     Timetable   Timetable @relation(fields: [timetableId], references: [id], onDelete: Cascade)

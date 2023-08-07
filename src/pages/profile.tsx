@@ -54,8 +54,10 @@ export default function Profile({ userId }: { userId: string }) {
   const { data: userData, isLoading: isUserLoading } = api.user.get.useQuery({
     id: userId,
   });
+  const { data: timetable, isLoading: timetableLoading } =
+    api.timetable.getPublished.useQuery();
 
-  if (isUserLoading || userData === undefined) {
+  if (isUserLoading || userData === undefined || timetableLoading) {
     return <LoadingPage />;
   }
 
@@ -123,7 +125,11 @@ export default function Profile({ userId }: { userId: string }) {
               {/* <button className="mr-4 text-sm text-blue-300">Edit</button> */}
             </div>
             <hr className="mb-2" />
-            <Timetable />
+            {timetable === null || timetable === undefined ? (
+              <span className="text-xl">No timetable published yet</span>
+            ) : (
+              <Timetable timetable={timetable} />
+            )}
           </div>
         </main>
       </div>

@@ -73,6 +73,7 @@ export default function GeneratePage({ userId, timetableId }: PageProps) {
       toast({
         title: "Timetable generated",
         description: "You can view it in the timetable page",
+        duration: 1000,
       });
     },
     onError(error) {
@@ -92,6 +93,7 @@ export default function GeneratePage({ userId, timetableId }: PageProps) {
     toast({
       title: "Generating timetable",
       description: "This may take a while...",
+      duration: 2000,
     });
 
     generateMutation.mutate({ courses: selectedCourses, id: timetableId });

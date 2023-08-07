@@ -44,8 +44,10 @@ function ResourceCard(props: { label: string; count: number }) {
 
 export default function DashboardHome({ userId }: { userId: string }) {
   const { data, isLoading } = api.statistics.get.useQuery();
+  const { data: timetable, isLoading: timetableLoading } =
+    api.timetable.getPublished.useQuery();
 
-  if (isLoading || data === undefined) {
+  if (isLoading || data === undefined || timetableLoading) {
     return <LoadingPage />;
   }
 
@@ -70,7 +72,11 @@ export default function DashboardHome({ userId }: { userId: string }) {
         <div>
           <h2 className="text-3xl font-semibold">Current timetable</h2>
           <hr className="mb-2" />
-          <Timetable />
+          {timetable === null || timetable === undefined ? (
+            <span className="text-xl">No timetable published yet</span>
+          ) : (
+            <Timetable timetable={timetable} />
+          )}
         </div>
       </div>
     </DashboardLayout>

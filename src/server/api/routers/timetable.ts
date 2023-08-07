@@ -17,6 +17,7 @@ export const timetableRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const item = await ctx.prisma.timetable.findUnique({
         where: { id: input.id },
+        include: { tasks: true },
       });
 
       if (item === null) {
@@ -30,7 +31,10 @@ export const timetableRouter = createTRPCRouter({
     }),
 
   getPublished: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.timetable.findFirst({ where: { published: true } });
+    return await ctx.prisma.timetable.findFirst({
+      where: { published: true },
+      include: { tasks: true },
+    });
   }),
 
   getAll: publicProcedure.query(({ ctx }) => {
@@ -216,10 +220,15 @@ export const timetableRouter = createTRPCRouter({
 
         if (resData.status === "ERROR") {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
+            code: "BAD_REQUEST",
             message: resData.error,
           });
         }
+
+        // Remove previous tasks (if any)
+        await ctx.prisma.task.deleteMany({
+          where: { timetableId: input.id },
+        });
 
         // Update the timetable
         return ctx.prisma.timetable.update({
