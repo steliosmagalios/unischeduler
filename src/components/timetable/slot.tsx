@@ -13,10 +13,11 @@ type SlotProps = {
   multiplier?: number;
   children?: string;
   className?: string;
+  subtext?: string;
 };
 
 export default function Slot(props: SlotProps) {
-  const { multiplier = 1, className, children } = props;
+  const { multiplier = 1, className, children, subtext } = props;
 
   return (
     <div
@@ -26,8 +27,22 @@ export default function Slot(props: SlotProps) {
         "flex flex-col items-center justify-center bg-slate-900 px-4"
       )}
     >
-      <p className="text-center line-clamp-3">{children}</p>
-      {/* <p className="text-sm text-muted-foreground">Subtext</p> */}
+      <p
+        className={cn(
+          "text-center line-clamp-3",
+          multiplier === 1 && "line-clamp-1"
+        )}
+      >
+        {children}
+      </p>
+      <p
+        className={cn(
+          "text-center text-sm text-muted-foreground",
+          multiplier === 1 && "line-clamp-1"
+        )}
+      >
+        {subtext}
+      </p>
     </div>
   );
 }
