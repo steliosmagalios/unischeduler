@@ -46,6 +46,38 @@ export const courseRouter = createTRPCRouter({
     });
   }),
 
+  getFromTimetable: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const timetable = await ctx.prisma.timetable.findFirst({
+        where: { id: input.id },
+      });
+
+      if (timetable === null) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Timetable not found",
+        });
+      }
+
+      const semester = timetable.semester === "Fall" ? 1 : 2;
+      const semesterArr = Array.from(
+        { length: 10 },
+        (_, i) => i * 2 + semester // FIXME: this needs a refactor, but it's good enough for now
+      );
+
+      return ctx.prisma.course.findMany({
+        where: {
+          semester: {
+            in: semesterArr,
+          },
+        },
+        orderBy: {
+          semester: "asc",
+        },
+      });
+    }),
+
   getLectures: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {

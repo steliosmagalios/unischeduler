@@ -2,15 +2,32 @@ import { buildClerkProps } from "@clerk/nextjs/server";
 import { type Timetable } from "@prisma/client";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Calendar, ExternalLinkIcon } from "lucide-react";
+import { Calendar, CheckIcon, ExternalLinkIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Link from "next/link";
 import { z } from "zod";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
 import { useRowActions } from "~/components/resource-layout/row-actions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { Button } from "~/components/ui/button";
 import { DialogFooter, DialogTitle } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { useToast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import getCurrentUser from "~/utils/get-current-user";
 
@@ -101,7 +118,7 @@ export default function TimetablesPage({ userId }: { userId: string }) {
   });
 
   const actions = useRowActions<Timetable>({
-    label: "Course",
+    label: "Timetable",
     schema,
     viewComponent: TimetableCard,
     handlers: {
@@ -116,13 +133,31 @@ export default function TimetablesPage({ userId }: { userId: string }) {
       {
         render(key, item) {
           return (
-            <Button key={key} asChild variant="ghost" className="h-8 w-8 p-0">
-              <Link href={`/dashboard/timetables/generate?id=${item.id}`}>
-                <span className="sr-only">Generate</span>
-                <Calendar className="h-4 w-4" />
-              </Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  key={key}
+                  asChild
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                >
+                  <Link href={`/dashboard/timetables/generate?id=${item.id}`}>
+                    <span className="sr-only">Generate</span>
+                    <Calendar className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                <span>Generate</span>
+              </TooltipContent>
+            </Tooltip>
           );
+        },
+      },
+      {
+        render(key, item) {
+          return <PublishDialog key={key} id={item.id} />;
         },
       },
     ],
@@ -154,7 +189,7 @@ function TimetableCard({ item }: { item: Timetable }) {
       <div className="flex flex-col gap-2">
         <p className="text-xl font-semibold">{item.name}</p>
         <p className="text-sm italic text-muted-foreground">
-          {item.semester} {!item.published && "(published)"}
+          {item.semester} {item.published && "(published)"}
         </p>
 
         {item.generated ? (
@@ -174,5 +209,63 @@ function TimetableCard({ item }: { item: Timetable }) {
         </DialogClose>
       </DialogFooter>
     </>
+  );
+}
+
+function PublishDialog({ id }: { id: number }) {
+  const { toast } = useToast();
+  const ctx = api.useContext();
+  const publishMutation = api.timetable.publish.useMutation({
+    onSuccess: () => {
+      void ctx.timetable.getAll.invalidate();
+      void ctx.timetable.getPublished.invalidate();
+    },
+    onError(error) {
+      toast({
+        variant: "destructive",
+        title: "Error Publishing Timetable",
+        description: error.message,
+        duration: 2000,
+      });
+    },
+  });
+
+  function publishTimetable() {
+    publishMutation.mutate({ id });
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <Tooltip>
+            <TooltipTrigger>
+              <span className="sr-only">Publish</span>
+              <CheckIcon className="h-4 w-4" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>Publish Timetable</span>
+            </TooltipContent>
+          </Tooltip>
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="capitalize">
+            Publish Timetable
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to pushlish this timetable? This action will
+            unpublish the current published timetable.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={publishTimetable}>
+            Publish
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

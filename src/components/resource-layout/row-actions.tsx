@@ -66,7 +66,7 @@ export function useRowActions<TData extends { id: number }>(
               key={key}
               triggerChildren={
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">View</span>
                   <View className="h-4 w-4" />
                 </Button>
               }
@@ -83,7 +83,7 @@ export function useRowActions<TData extends { id: number }>(
               key={key}
               triggerChildren={
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">Edit</span>
                   <Edit className="h-4 w-4" />
                 </Button>
               }
@@ -112,7 +112,7 @@ export function useRowActions<TData extends { id: number }>(
             <AlertDialog key={key}>
               <AlertDialogTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">Delete</span>
                   <Trash className="h-4 w-4" />
                 </Button>
               </AlertDialogTrigger>

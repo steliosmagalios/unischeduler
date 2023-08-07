@@ -121,7 +121,7 @@ model Task {
     room      Room    @relation(fields: [roomId], references: [id])
     roomId    Int
 
-    Timetable   Timetable @relation(fields: [timetableId], references: [id])
+    Timetable   Timetable @relation(fields: [timetableId], references: [id], onDelete: Cascade)
     timetableId Int
 
     createdAt DateTime @default(now())

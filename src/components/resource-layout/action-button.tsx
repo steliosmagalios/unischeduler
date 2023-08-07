@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 type ActionButtonProps = {
   triggerChildren: React.ReactNode;
   children: React.ReactNode;
+  tooltip?: string;
 } & DialogProps;
 
 export default function ActionButton(props: ActionButtonProps) {

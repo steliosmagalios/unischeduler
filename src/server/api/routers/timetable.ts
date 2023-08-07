@@ -97,6 +97,19 @@ export const timetableRouter = createTRPCRouter({
         });
       }
 
+      // Check if the timetable is generated
+      const generated =
+        (await ctx.prisma.timetable.findFirst({
+          where: { id: input.id, generated: true },
+        })) !== null;
+
+      if (!generated) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "The requested timetable is not generated!",
+        });
+      }
+
       // Unpublish every other unpublished timetable
       await ctx.prisma.timetable.updateMany({
         where: { published: true },
@@ -128,11 +141,119 @@ export const timetableRouter = createTRPCRouter({
     }),
 
   generate: adminOnlyProcedure
-    .input(z.object({ lectures: z.array(z.number()) }))
-    .mutation(({ ctx, input }) => {
+    .input(z.object({ id: z.number(), courses: z.array(z.number()) }))
+    .mutation(async ({ ctx, input }) => {
+      const lectures = await ctx.prisma.lecture.findMany({
+        where: {
+          courseId: {
+            in: input.courses,
+          },
+        },
+        include: {
+          professors: {
+            select: {
+              id: true,
+              availability: true,
+            },
+          },
+          groups: {
+            select: {
+              id: true,
+              size: true,
+              overlappedBy: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      const rooms = await ctx.prisma.room.findMany({
+        select: {
+          id: true,
+          type: true,
+          capacity: true,
+          availability: true,
+        },
+      });
+
+      const body = {
+        lectures: lectures.map((lecture) => ({
+          id: lecture.id,
+          duration: lecture.duration,
+          type: lecture.type,
+          professors: lecture.professors.map((professor) => professor.id),
+          groups: lecture.groups.map((group) => group.id),
+        })),
+        professors: lectures.flatMap((lecture) => lecture.professors),
+        groups: lectures.flatMap((lecture) =>
+          lecture.groups.map((g) => ({
+            id: g.id,
+            size: g.size,
+            overlapping: g.overlappedBy.map((o) => o.id),
+          }))
+        ),
+        rooms: rooms,
+      };
+
+      console.log(JSON.stringify(body, null, 2));
+
+      const res = await fetch("http://127.0.0.1:18080/", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }).catch((err: Error) => {
+        console.error(`error: ${err.message}`);
+        return null;
+      });
+
+      if (res !== null) {
+        const resData = (await res.json()) as SchedulerResponse;
+
+        if (resData.status === "ERROR") {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: resData.error,
+          });
+        }
+
+        // Update the timetable
+        return ctx.prisma.timetable.update({
+          where: { id: input.id },
+          data: {
+            generated: true,
+            tasks: {
+              createMany: {
+                data: resData.data,
+              },
+            },
+          },
+        });
+      }
+
       throw new TRPCError({
-        code: "METHOD_NOT_SUPPORTED",
-        message: "Timetable generation is not currently supported",
+        code: "INTERNAL_SERVER_ERROR",
+        message: "There was an error generating the timetable.",
       });
     }),
 });
+
+type SchedulerResponse =
+  | {
+      status: "SUCCESS";
+      error: null;
+      data: {
+        lectureId: number;
+        roomId: number;
+        startTime: number;
+      };
+    }
+  | {
+      status: "ERROR";
+      error: string;
+      data: null;
+    };

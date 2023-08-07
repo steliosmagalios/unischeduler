@@ -122,7 +122,7 @@ export default function EditLecturesPage(props: PageProps) {
       <div className="flex flex-row-reverse gap-2">
         <Button onClick={() => handleAddNew()}>Add New</Button>
         <Button asChild variant="outline">
-          <Link href="/dashboard/courses"> Go Back</Link>
+          <Link href="/dashboard/courses">Go Back</Link>
         </Button>
       </div>
     </DashboardLayout>
