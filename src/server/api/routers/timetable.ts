@@ -5,6 +5,7 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
+import { type CurrentTimetable } from "~/utils/constants";
 
 const baseTimetableSchema = z.object({
   name: z.string(),
@@ -43,6 +44,7 @@ export const timetableRouter = createTRPCRouter({
                 Course: {
                   select: {
                     name: true,
+                    semester: true,
                   },
                 },
                 professors: {
@@ -82,6 +84,7 @@ export const timetableRouter = createTRPCRouter({
         startTime: task.startTime,
         roomName: task.room.name,
         courseName: task.lecture.Course.name,
+        semester: task.lecture.Course.semester,
         lecture: {
           name: task.lecture.name,
           professor: task.lecture.professors.map(
@@ -93,7 +96,7 @@ export const timetableRouter = createTRPCRouter({
           duration: task.lecture.duration,
         },
       })),
-    };
+    } satisfies CurrentTimetable;
   }),
 
   getAll: publicProcedure.query(({ ctx }) => {

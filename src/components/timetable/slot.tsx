@@ -1,3 +1,5 @@
+import { Dialog } from "@radix-ui/react-dialog";
+import { DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { cn } from "~/utils/shad-utils";
 
 // This needs to exist because tailwind
@@ -37,12 +39,26 @@ export default function Slot(props: SlotProps) {
       </p>
       <p
         className={cn(
-          "text-center text-sm text-muted-foreground",
+          "text-center text-sm italic text-muted-foreground line-clamp-2",
           multiplier === 1 && "line-clamp-1"
         )}
       >
         {subtext}
       </p>
     </div>
+  );
+}
+
+export function DetailsSlot(props: SlotProps) {
+  return (
+    <Dialog modal>
+      <DialogTrigger>
+        <Slot {...props} />
+      </DialogTrigger>
+
+      <DialogContent>
+        <pre>{JSON.stringify(props, null, 2)}</pre>
+      </DialogContent>
+    </Dialog>
   );
 }
