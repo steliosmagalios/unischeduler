@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 import {
   adminOnlyProcedure,
   createTRPCRouter,
@@ -321,7 +322,7 @@ export const timetableRouter = createTRPCRouter({
 
       // console.log(JSON.stringify(body, null, 2));
 
-      const res = await fetch("http://127.0.0.1:18080/", {
+      const res = await fetch(env.SCHEDULER_URL, {
         method: "POST",
         headers: {
           Accept: "application/json",

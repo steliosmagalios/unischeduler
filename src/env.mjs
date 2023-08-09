@@ -12,6 +12,8 @@ export const env = createEnv({
 
     CLERK_WEBHOOK_SECRET_USER: z.string(),
     CLERK_WEBHOOK_SECRET_SESSION: z.string(),
+
+    SCHEDULER_URL: z.string().url(),
   },
 
   /**
@@ -32,6 +34,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     CLERK_WEBHOOK_SECRET_USER: process.env.CLERK_WEBHOOK_SECRET_USER,
     CLERK_WEBHOOK_SECRET_SESSION: process.env.CLERK_WEBHOOK_SECRET_SESSION,
+    SCHEDULER_URL: process.env.SCHEDULER_URL,
 
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
