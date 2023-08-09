@@ -103,8 +103,6 @@ export function DetailsSlot(props: DetailsSlotProps) {
               {props.task.lecture.groups}
             </p>
           </div>
-
-          <pre>{JSON.stringify(props, null, 2)}</pre>
         </div>
       </DialogContent>
     </Dialog>
