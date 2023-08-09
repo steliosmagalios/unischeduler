@@ -5,7 +5,6 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Calendar, CheckIcon, ExternalLinkIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Link from "next/link";
-import { forwardRef } from "react";
 import { z } from "zod";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
@@ -233,7 +232,10 @@ function PublishDialog({ id }: { id: number }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <ButtonWithTooltip />
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Publish</span>
+          <CheckIcon className="h-4 w-4" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -255,19 +257,3 @@ function PublishDialog({ id }: { id: number }) {
     </AlertDialog>
   );
 }
-
-const ButtonWithTooltip = forwardRef<HTMLButtonElement>(({}, ref) => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Button ref={ref} variant="ghost" className="h-8 w-8 p-0">
-        <span className="sr-only">Publish</span>
-        <CheckIcon className="h-4 w-4" />
-      </Button>
-    </TooltipTrigger>
-    <TooltipContent>
-      <span>Publish Timetable</span>
-    </TooltipContent>
-  </Tooltip>
-));
-
-ButtonWithTooltip.displayName = "ButtonWithTooltip";
