@@ -19,8 +19,6 @@ export default function Timetable(props: TimetableProps) {
   const { timetable } = props;
   const parsedTimetable = useMemo(() => newParse(timetable), [timetable]);
 
-  console.log(parsedTimetable);
-
   return (
     <Tabs defaultValue={parsedTimetable[0]?.label ?? ""}>
       <TabsList>

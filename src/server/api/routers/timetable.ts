@@ -265,7 +265,7 @@ export const timetableRouter = createTRPCRouter({
         rooms: rooms,
       };
 
-      console.log(JSON.stringify(body, null, 2));
+      // console.log(JSON.stringify(body, null, 2));
 
       const res = await fetch("http://127.0.0.1:18080/", {
         method: "POST",

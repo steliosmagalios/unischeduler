@@ -11,7 +11,7 @@ export default async function checkAndLinkUser(
     null;
 
   if (hasRecord) {
-    console.log("do nothing");
+    // console.log("do nothing");
     return true;
   }
 
@@ -22,7 +22,7 @@ export default async function checkAndLinkUser(
   );
 
   if (typeof email === "undefined") {
-    console.log("email not found");
+    // console.log("email not found");
     return true;
   }
 
@@ -31,7 +31,7 @@ export default async function checkAndLinkUser(
   });
 
   if (record === null) {
-    console.log("record not found");
+    // console.log("record not found");
     return true;
   }
 
@@ -42,6 +42,6 @@ export default async function checkAndLinkUser(
     },
   });
 
-  console.log("All OK!");
+  // console.log("All OK!");
   return true;
 }
