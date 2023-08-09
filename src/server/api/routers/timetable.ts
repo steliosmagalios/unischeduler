@@ -16,19 +16,73 @@ export const timetableRouter = createTRPCRouter({
   get: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const item = await ctx.prisma.timetable.findUnique({
+      const data = await ctx.prisma.timetable.findUnique({
         where: { id: input.id },
-        include: { tasks: true },
+        include: {
+          tasks: {
+            include: {
+              lecture: {
+                select: {
+                  duration: true,
+                  name: true,
+                  Course: {
+                    select: {
+                      name: true,
+                      semester: true,
+                      id: true,
+                    },
+                  },
+                  professors: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      email: true,
+                    },
+                  },
+                  groups: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+              room: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
       });
 
-      if (item === null) {
+      if (!data) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Timetable not found",
+          message: "No published timetable found",
         });
       }
 
-      return item;
+      return {
+        ...data,
+        tasks: data.tasks.map((task) => ({
+          startTime: task.startTime,
+          roomName: task.room.name,
+          courseName: task.lecture.Course.name,
+          courseId: task.lecture.Course.id,
+          semester: task.lecture.Course.semester,
+          lecture: {
+            name: task.lecture.name,
+            professor: task.lecture.professors.map(
+              (professor) =>
+                `${professor.firstName ?? ""} ${professor.lastName ?? ""}` ??
+                professor.email
+            ),
+            groups: task.lecture.groups.map((group) => group.name),
+            duration: task.lecture.duration,
+          },
+        })),
+      } satisfies CurrentTimetable;
     }),
 
   getPublished: publicProcedure.query(async ({ ctx }) => {
