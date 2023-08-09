@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import { type AppType } from "next/app";
 import { ThemeProvider } from "~/components/theme-provider";
 import { Toaster } from "~/components/ui/toaster";
@@ -8,7 +9,7 @@ import { api } from "~/utils/api";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <ClerkProvider {...pageProps}>
+    <ClerkProvider appearance={{ baseTheme: dark }} {...pageProps}>
       <ThemeProvider defaultTheme="dark" attribute="class">
         <TooltipProvider>
           <Component {...pageProps} />
