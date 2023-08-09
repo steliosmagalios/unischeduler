@@ -45,6 +45,7 @@ export const timetableRouter = createTRPCRouter({
                   select: {
                     name: true,
                     semester: true,
+                    id: true,
                   },
                 },
                 professors: {
@@ -84,6 +85,7 @@ export const timetableRouter = createTRPCRouter({
         startTime: task.startTime,
         roomName: task.room.name,
         courseName: task.lecture.Course.name,
+        courseId: task.lecture.Course.id,
         semester: task.lecture.Course.semester,
         lecture: {
           name: task.lecture.name,

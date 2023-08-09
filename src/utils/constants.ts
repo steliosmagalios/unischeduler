@@ -19,6 +19,7 @@ export type CurrentTimetable =
         roomName: string;
         courseName: string;
         semester: number;
+        courseId: number;
         lecture: {
           name: string;
           professor: string[];

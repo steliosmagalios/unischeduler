@@ -5,7 +5,7 @@ import { type GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
 import Head from "next/head";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AvailabilityDialog from "~/components/availability-dialog";
 import { LoadingPage } from "~/components/loader";
 import ManageCoursesDialog from "~/components/manage-courses-dialog";
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { api } from "~/utils/api";
+import { TIMESLOTS, type CurrentTimetable } from "~/utils/constants";
 import getCurrentUser from "~/utils/get-current-user";
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -41,13 +42,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // Visit this in the future
     props: { userId: user.externalId, ...buildClerkProps(ctx.req) },
   };
-};
-
-const dummyCourse = {
-  title: "Course Name (Dummy)",
-  startTime: 18,
-  duration: 3,
-  room: "Aud 13",
 };
 
 export default function Profile({ userId }: { userId: string }) {
@@ -107,12 +101,10 @@ export default function Profile({ userId }: { userId: string }) {
             {/* Daily schedule */}
             <div className="flex flex-grow flex-col gap-2 overflow-hidden">
               <h2 className="text-center text-2xl font-semibold">
-                Today&apos;s Courses
+                Today&apos;s Lectures
               </h2>
               <div className="flex flex-grow flex-col gap-2 overflow-auto">
-                {Array.from(Array(7)).map((_, idx) => (
-                  <LectureCard key={idx} {...dummyCourse} />
-                ))}
+                <LectureCardList timetable={timetable} />
               </div>
             </div>
           </div>
@@ -122,7 +114,6 @@ export default function Profile({ userId }: { userId: string }) {
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Your Weekly schedule</h2>
               <ManageCoursesDialog />
-              {/* <button className="mr-4 text-sm text-blue-300">Edit</button> */}
             </div>
             <hr className="mb-2" />
             {timetable === null || timetable === undefined ? (
@@ -137,9 +128,71 @@ export default function Profile({ userId }: { userId: string }) {
   );
 }
 
+type LectureCardListProps = {
+  timetable: CurrentTimetable;
+};
+
+function LectureCardList(props: LectureCardListProps) {
+  // Keep only today's lectures
+  const [coursesToKeep, setCoursesToKeep] = useState<number[] | null>(null);
+  const todayTasks = useMemo(() => {
+    const today = new Date().getDay() - 1;
+    // const today = 0;
+
+    const filteredToday = props.timetable?.tasks.filter(
+      (task) => Math.floor(task.startTime / TIMESLOTS.length) === today
+    );
+
+    return filteredToday?.filter(
+      (t) => coursesToKeep?.includes(t.courseId) ?? true
+    );
+  }, [props.timetable, coursesToKeep]);
+
+  useEffect(() => {
+    if (window === undefined) return;
+
+    // Fetch the courses to keep
+    const courseObj = JSON.parse(
+      localStorage.getItem("rowSelection") || "{}"
+    ) as Record<number | string, true>;
+
+    setCoursesToKeep(
+      Object.keys(courseObj)
+        .filter((k) => !isNaN(Number(k)))
+        .map(Number)
+    );
+  }, []);
+
+  if (todayTasks === undefined || todayTasks.length === 0) {
+    return (
+      <div className="rounded-sm border bg-muted p-3 dark:bg-neutral-900">
+        <p className="text-center font-semibold">
+          You have no lectures today. Enjoy your day off!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {todayTasks.map((t, idx) => (
+        <LectureCard
+          key={idx}
+          duration={t.lecture.duration}
+          startTime={t.startTime}
+          lecture={t.lecture.name}
+          room={t.roomName}
+          title={t.courseName}
+        />
+      ))}
+    </>
+  );
+}
+
 type LectureCardProps = {
   title: string;
   room: string;
+  lecture: string;
   startTime: number;
   duration: number;
 };
@@ -156,7 +209,8 @@ function LectureCard(props: LectureCardProps) {
 
   return (
     <div className="rounded-sm border bg-muted p-3 dark:bg-neutral-900">
-      <p className="text-xl font-semibold line-clamp-1">{props.title}</p>
+      <p className="text-xl font-bold line-clamp-1">{props.title}</p>
+      <p>{props.lecture}</p>
       <p className="text-sm italic text-muted-foreground">
         {props.room} <span className="font-bold">&#8226;</span> {formattedTime}
       </p>
