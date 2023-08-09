@@ -36,7 +36,7 @@ export default function Timetable(props: TimetableProps) {
           key={timetable.semester}
           value={timetable.semester.toString()}
         >
-          <div className="grid grid-cols-6 gap-px overflow-hidden rounded-md border">
+          <div className="grid grid-cols-6 gap-px overflow-hidden rounded-md border shadow-xl dark:shadow-none">
             <div className="flex flex-col gap-px">
               <Slot className="font-bold">Time</Slot>
 

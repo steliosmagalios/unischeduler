@@ -26,7 +26,7 @@ export default function Slot(props: SlotProps) {
       className={cn(
         heightMap[multiplier] ?? heightMap[1],
         className,
-        "flex flex-col items-center justify-center bg-neutral-900 px-4"
+        "flex flex-col items-center justify-center bg-muted px-4 dark:bg-neutral-900"
       )}
     >
       <p

@@ -155,9 +155,9 @@ function LectureCard(props: LectureCardProps) {
   );
 
   return (
-    <div className="rounded-sm border bg-card p-3">
+    <div className="rounded-sm border bg-muted p-3 dark:bg-neutral-900">
       <p className="text-xl font-semibold line-clamp-1">{props.title}</p>
-      <p className="text-sm italic text-card-muted">
+      <p className="text-sm italic text-muted-foreground">
         {props.room} <span className="font-bold">&#8226;</span> {formattedTime}
       </p>
     </div>
