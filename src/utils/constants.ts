@@ -12,21 +12,23 @@ export const DAYS = [
   "Friday",
 ] as const;
 
+export type TimetableTask = {
+  startTime: number;
+  roomName: string;
+  courseName: string;
+  semester: number;
+  courseId: number;
+  lecture: {
+    name: string;
+    professor: string[];
+    groups: string[];
+    duration: number;
+  };
+};
+
 export type CurrentTimetable =
   | {
-      tasks: {
-        startTime: number;
-        roomName: string;
-        courseName: string;
-        semester: number;
-        courseId: number;
-        lecture: {
-          name: string;
-          professor: string[];
-          groups: string[];
-          duration: number;
-        };
-      }[];
+      tasks: TimetableTask[];
       id: number;
       name: string;
       semester: TimetableSemester;

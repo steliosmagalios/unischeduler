@@ -1,16 +1,44 @@
+import { useMemo } from "react";
 import { type TData } from "~/components/timetable";
 import Slot, { DetailsSlot } from "~/components/timetable/slot";
-import { DAYS, TIMESLOTS } from "~/utils/constants";
+import { DAYS, TIMESLOTS, type TimetableTask } from "~/utils/constants";
 
 type Props = {
-  data: TData;
+  data: TimetableTask[];
 };
 
 export default function TimetablePanel(props: Props) {
+  const parsedData = useMemo(() => {
+    const currData: TData = {
+      Monday: [],
+      Tuesday: [],
+      Wednesday: [],
+      Thursday: [],
+      Friday: [],
+    };
+
+    props.data.forEach((task) => {
+      const day = DAYS[Math.floor(task.startTime / TIMESLOTS.length)];
+
+      if (day === undefined) {
+        return;
+      }
+
+      currData[day].push({
+        time: task.startTime,
+        label: task.courseName,
+        subtext: `${task.lecture.name}, ${task.roomName}`,
+        duration: task.lecture.duration,
+      });
+    });
+
+    return currData;
+  }, [props.data]);
+
   return (
     <>
       {DAYS.map((day, dayIdx) => {
-        const dayItems = props.data[day];
+        const dayItems = parsedData[day];
 
         return (
           <div key={day} className="flex flex-col gap-px">

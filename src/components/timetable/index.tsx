@@ -4,9 +4,12 @@ import TimetablePanel, {
   type Table,
 } from "~/components/timetable/timetable-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { DAYS, TIMESLOTS, type CurrentTimetable } from "~/utils/constants";
-
-const daySlots = TIMESLOTS.length;
+import {
+  DAYS,
+  TIMESLOTS,
+  type CurrentTimetable,
+  type TimetableTask,
+} from "~/utils/constants";
 
 type TimetableProps = {
   timetable: CurrentTimetable;
@@ -16,26 +19,23 @@ export type TData = Record<(typeof DAYS)[number], Table>;
 
 export default function Timetable(props: TimetableProps) {
   const { timetable } = props;
-  const parsedTimetable = useMemo(() => parseData(timetable), [timetable]);
+  // const parsedTimetable = useMemo(() => parseData(timetable), [timetable]);
+  const parsedTimetable = useMemo(() => newParse(timetable), [timetable]);
+
+  console.log(parsedTimetable);
 
   return (
-    <Tabs defaultValue={parsedTimetable[0]?.semester.toString() ?? ""}>
+    <Tabs defaultValue={parsedTimetable[0]?.label ?? ""}>
       <TabsList>
         {parsedTimetable.map((timetable) => (
-          <TabsTrigger
-            key={timetable.semester}
-            value={timetable.semester.toString()}
-          >
-            Semester {timetable.semester}
+          <TabsTrigger key={timetable.label} value={timetable.label}>
+            Semester {timetable.label}
           </TabsTrigger>
         ))}
       </TabsList>
 
       {parsedTimetable.map((timetable) => (
-        <TabsContent
-          key={timetable.semester}
-          value={timetable.semester.toString()}
-        >
+        <TabsContent key={timetable.label} value={timetable.label}>
           <div className="grid grid-cols-6 gap-px overflow-hidden rounded-md border shadow-xl dark:shadow-none">
             <div className="flex flex-col gap-px">
               <Slot className="font-bold">Time</Slot>
@@ -49,7 +49,7 @@ export default function Timetable(props: TimetableProps) {
               ))}
             </div>
 
-            <TimetablePanel data={timetable.data} />
+            <TimetablePanel data={timetable.timetable} />
           </div>
         </TabsContent>
       ))}
@@ -57,50 +57,58 @@ export default function Timetable(props: TimetableProps) {
   );
 }
 
-type PerSemesterData = Array<{
-  semester: number;
-  data: TData;
-  subtext?: string;
-}>;
-
-function parseData(data: CurrentTimetable): PerSemesterData {
-  const perSemester: PerSemesterData = [];
-
+function newParse(data: CurrentTimetable) {
   // Find all semesters in the timetable
   const semesters = data?.tasks
     .map((v) => v.semester)
     .filter((v, idx, arr) => arr.indexOf(v) === idx)
     .sort((a, b) => a - b);
 
-  // FIXME: Handle multiple tasks in same timeslots
-  semesters?.forEach((semester) => {
-    const tasks = data?.tasks.filter((t) => t.semester === semester) ?? [];
+  // Filter the tasks per semester
+  const perSemesterMap = new Map<number, TimetableTask[]>();
+  semesters?.forEach((semester) =>
+    perSemesterMap.set(
+      semester,
+      data?.tasks.filter((t) => t.semester === semester) ?? []
+    )
+  );
 
-    const currData: TData = {
-      Monday: [],
-      Tuesday: [],
-      Wednesday: [],
-      Thursday: [],
-      Friday: [],
-    };
+  // For every semester create timetables
+  return (
+    semesters?.flatMap((semester) => {
+      const tasks = perSemesterMap.get(semester) ?? [];
 
-    tasks.forEach((task) => {
-      const day = DAYS[Math.floor(task.startTime / daySlots)];
+      const timetables = [];
+      let timetableCount = 0;
+      while (tasks.length > 0) {
+        const currTimetable: TimetableTask[] = [];
+        for (let index = 1; index < DAYS.length * TIMESLOTS.length; ) {
+          const taskIndex = tasks.findIndex((t) => t.startTime === index);
+          if (taskIndex === -1) {
+            index++;
+            continue;
+          }
 
-      if (day === undefined) {
-        return;
+          // Find a task and remove it from the list
+          const task = tasks[taskIndex];
+          tasks.splice(taskIndex, 1);
+
+          // Add the task to the timetalbe and move the index according to duration
+          if (task !== undefined) currTimetable.push(task);
+          index += task?.lecture.duration || 1;
+        }
+
+        timetables.push({ count: timetableCount, data: currTimetable });
+        timetableCount++;
       }
 
-      currData[day].push({
-        time: task.startTime,
-        label: task.courseName,
-        subtext: `${task.lecture.name}, ${task.roomName}`,
-        duration: task.lecture.duration,
-      });
-    });
-
-    perSemester.push({ semester, data: currData });
-  });
-
-  return perSemester;
+      return timetables.map((tt) => ({
+        label:
+          timetables.length === 1
+            ? semester.toString()
+            : `${semester} - ${tt.count + 1}`,
+        timetable: tt.data,
+      }));
+    }) ?? []
+  );
 }
