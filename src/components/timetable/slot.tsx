@@ -1,4 +1,5 @@
 import { Dialog } from "@radix-ui/react-dialog";
+import { useMemo } from "react";
 import { DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { type TimetableTask } from "~/utils/constants";
 import { cn } from "~/utils/shad-utils";
@@ -55,6 +56,16 @@ type DetailsSlotProps = {
 } & Pick<SlotProps, "className" | "multiplier">;
 
 export function DetailsSlot(props: DetailsSlotProps) {
+  const formattedTime = useMemo(
+    () =>
+      `${props.task.startTime.toString().padStart(2, "0")}:00 - ${(
+        props.task.startTime + props.task.lecture.duration
+      )
+        .toString()
+        .padStart(2, "0")}:00`,
+    [props.task.startTime, props.task.lecture.duration]
+  );
+
   return (
     <Dialog modal>
       <DialogTrigger>
@@ -67,7 +78,29 @@ export function DetailsSlot(props: DetailsSlotProps) {
       </DialogTrigger>
 
       <DialogContent>
-        <pre>{JSON.stringify(props, null, 2)}</pre>
+        <div className="flex flex-col gap-2">
+          <div>
+            <h2 className="text-xl font-bold">{props.task.courseName}</h2>
+            <h3 className="pl-2 text-sm italic text-muted-foreground">
+              {props.task.roomName} <span className="font-bold">&#8226;</span>{" "}
+              {formattedTime}
+            </h3>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold">Professors</h2>
+            <p className="pl-2 text-muted-foreground">
+              {props.task.lecture.professor}
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-lg font-semibold">Groups</h2>
+            <p className="pl-2 text-muted-foreground">
+              {props.task.lecture.groups}
+            </p>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
