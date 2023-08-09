@@ -1,5 +1,6 @@
 import { Dialog } from "@radix-ui/react-dialog";
 import { DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import { type TimetableTask } from "~/utils/constants";
 import { cn } from "~/utils/shad-utils";
 
 // This needs to exist because tailwind
@@ -49,11 +50,20 @@ export default function Slot(props: SlotProps) {
   );
 }
 
-export function DetailsSlot(props: SlotProps) {
+type DetailsSlotProps = {
+  task: TimetableTask;
+} & Pick<SlotProps, "className" | "multiplier">;
+
+export function DetailsSlot(props: DetailsSlotProps) {
   return (
     <Dialog modal>
       <DialogTrigger>
-        <Slot {...props} />
+        <Slot
+          subtext={`${props.task.lecture.name}, ${props.task.roomName}`}
+          {...props}
+        >
+          {props.task.courseName}
+        </Slot>
       </DialogTrigger>
 
       <DialogContent>

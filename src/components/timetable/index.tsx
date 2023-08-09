@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import Slot from "~/components/timetable/slot";
-import TimetablePanel, {
-  type Table,
-} from "~/components/timetable/timetable-panel";
+import TimetablePanel from "~/components/timetable/timetable-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
   DAYS,
@@ -15,11 +13,10 @@ type TimetableProps = {
   timetable: CurrentTimetable;
 };
 
-export type TData = Record<(typeof DAYS)[number], Table>;
+export type TData = Record<(typeof DAYS)[number], TimetableTask[]>;
 
 export default function Timetable(props: TimetableProps) {
   const { timetable } = props;
-  // const parsedTimetable = useMemo(() => parseData(timetable), [timetable]);
   const parsedTimetable = useMemo(() => newParse(timetable), [timetable]);
 
   console.log(parsedTimetable);

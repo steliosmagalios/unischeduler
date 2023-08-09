@@ -24,12 +24,7 @@ export default function TimetablePanel(props: Props) {
         return;
       }
 
-      currData[day].push({
-        time: task.startTime,
-        label: task.courseName,
-        subtext: `${task.lecture.name}, ${task.roomName}`,
-        duration: task.lecture.duration,
-      });
+      currData[day].push(task);
     });
 
     return currData;
@@ -56,11 +51,9 @@ export default function TimetablePanel(props: Props) {
               return (
                 <DetailsSlot
                   key={idx}
-                  multiplier={item.duration}
-                  subtext={item.subtext}
-                >
-                  {item.label}
-                </DetailsSlot>
+                  multiplier={item.lecture.duration}
+                  task={item}
+                />
               );
             })}
           </div>
@@ -70,7 +63,7 @@ export default function TimetablePanel(props: Props) {
   );
 }
 
-export type Table = Array<TableItem>;
+export type Table = Array<TimetableTask>;
 
 export type TableItem = {
   time: number;
@@ -83,15 +76,15 @@ function parseTimetable(
   table: Table,
   limit: number,
   offset = 0
-): Array<TableItem | null> {
-  const parsed: Array<TableItem | null> = [];
+): Array<TimetableTask | null> {
+  const parsed: Array<TimetableTask | null> = [];
 
   for (let i = 1; i <= limit; i++) {
-    const item = table.find((item) => item.time === i + offset);
+    const item = table.find((item) => item.startTime === i + offset);
 
     if (item) {
       parsed.push(item);
-      i += item.duration ? item.duration - 1 : 0;
+      i += item.lecture.duration ? item.lecture.duration - 1 : 0;
     } else {
       parsed.push(null);
     }
