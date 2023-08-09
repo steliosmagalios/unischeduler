@@ -1,7 +1,7 @@
 import { Dialog } from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 import { DialogContent, DialogTrigger } from "~/components/ui/dialog";
-import { type TimetableTask } from "~/utils/constants";
+import { TIMESLOTS, type TimetableTask } from "~/utils/constants";
 import { cn } from "~/utils/shad-utils";
 
 // This needs to exist because tailwind
@@ -56,15 +56,18 @@ type DetailsSlotProps = {
 } & Pick<SlotProps, "className" | "multiplier">;
 
 export function DetailsSlot(props: DetailsSlotProps) {
-  const formattedTime = useMemo(
-    () =>
-      `${props.task.startTime.toString().padStart(2, "0")}:00 - ${(
-        props.task.startTime + props.task.lecture.duration
-      )
-        .toString()
-        .padStart(2, "0")}:00`,
-    [props.task.startTime, props.task.lecture.duration]
-  );
+  const formattedTime = useMemo(() => {
+    const startTime =
+      ((props.task.startTime - 1) % (TIMESLOTS.length - 1)) + TIMESLOTS[0];
+    const endTime =
+      ((props.task.startTime + props.task.lecture.duration - 1) %
+        (TIMESLOTS.length - 1)) +
+      TIMESLOTS[0];
+
+    return `${startTime.toString().padStart(2, "0")}:00 - ${endTime
+      .toString()
+      .padStart(2, "0")}:00`;
+  }, [props.task.startTime, props.task.lecture.duration]);
 
   return (
     <Dialog modal>
@@ -100,6 +103,8 @@ export function DetailsSlot(props: DetailsSlotProps) {
               {props.task.lecture.groups}
             </p>
           </div>
+
+          <pre>{JSON.stringify(props, null, 2)}</pre>
         </div>
       </DialogContent>
     </Dialog>
