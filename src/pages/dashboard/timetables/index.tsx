@@ -5,6 +5,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Calendar, CheckIcon, ExternalLinkIcon } from "lucide-react";
 import { type GetServerSideProps } from "next";
 import Link from "next/link";
+import { forwardRef } from "react";
 import { z } from "zod";
 import { LoadingPage } from "~/components/loader";
 import ResourceLayout from "~/components/resource-layout";
@@ -133,14 +134,9 @@ export default function TimetablesPage({ userId }: { userId: string }) {
       {
         render(key, item) {
           return (
-            <Tooltip>
+            <Tooltip key={key}>
               <TooltipTrigger asChild>
-                <Button
-                  key={key}
-                  asChild
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
-                >
+                <Button asChild variant="ghost" className="h-8 w-8 p-0">
                   <Link href={`/dashboard/timetables/generate?id=${item.id}`}>
                     <span className="sr-only">Generate</span>
                     <Calendar className="h-4 w-4" />
@@ -237,17 +233,7 @@ function PublishDialog({ id }: { id: number }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <Tooltip>
-            <TooltipTrigger>
-              <span className="sr-only">Publish</span>
-              <CheckIcon className="h-4 w-4" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>Publish Timetable</span>
-            </TooltipContent>
-          </Tooltip>
-        </Button>
+        <ButtonWithTooltip />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -269,3 +255,19 @@ function PublishDialog({ id }: { id: number }) {
     </AlertDialog>
   );
 }
+
+const ButtonWithTooltip = forwardRef<HTMLButtonElement>(({}, ref) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button ref={ref} variant="ghost" className="h-8 w-8 p-0">
+        <span className="sr-only">Publish</span>
+        <CheckIcon className="h-4 w-4" />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <span>Publish Timetable</span>
+    </TooltipContent>
+  </Tooltip>
+));
+
+ButtonWithTooltip.displayName = "ButtonWithTooltip";
