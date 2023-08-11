@@ -11,7 +11,7 @@ To use this application you need:
 
 The above are provided through a docker-compose file (see `docker-compose.yml`). You will also need to build the NextJS app to use in production.
 
-To start the application simply `docker-compose up` the containers, `npm run build` the NextJS application (this requires to have node.js and npm installed in your machine), and voila.
+To start the application you will first need to provide the enviromnent variables for the application to work (see `.env.example` for the variables you will need.) Then simply `docker-compose up` the containers, `npm run build` the NextJS application (this requires to have node.js and npm installed in your machine), and voila.
 
 ## Scheduler Image
 
