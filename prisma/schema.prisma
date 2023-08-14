@@ -56,7 +56,7 @@ model Lecture {
     professors User[]
     groups     Group[]
 
-    Course   Course @relation(fields: [courseId], references: [id])
+    Course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
     courseId Int
 
     createdAt DateTime @default(now())
