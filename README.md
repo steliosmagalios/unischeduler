@@ -4,15 +4,33 @@ An application to create timetables for universities
 
 ## How to use
 
-To use this application you need:
+### Clerk
 
-- A PostgreSQL database
-- The university-scheduler prolog application. You can find it [here](https://github.com/steliosmagalios/university-scheduler)
+This application uses Clerk for authentication. To use this application, you need to create a new project on Clerk and add the secret and publishable keys for the project in the environment variables of the projects (`.env`).
 
-The above are provided through a docker-compose file (see `docker-compose.yml`). You will also need to build the NextJS app to use in production.
+This app also depends on webhooks to sync user clerk accounts with the database. Therefore, you also need to create two webhooks to the following endpoints:
 
-To start the application you will first need to provide the enviromnent variables for the application to work (see `.env.example` for the variables you will need.) Then simply `docker-compose up` the containers, `npm run build` the NextJS application (this requires to have node.js and npm installed in your machine), and voila.
+- /api/webhooks/session
+- /api/webhooks/user
 
-## Scheduler Image
+For those endpoints, you also need to provide the webhook secrets to the relevant environment variables (`CLERK_WEBHOOK_SECRET_SESSION` and `CLERK_WEBHOOK_SECRET_USER`).
 
-The docker image for the [university-scheduler](https://github.com/steliosmagalios/university-scheduler) is a SpringBoot server with a custom container of tomcat that ECLiPSe Prolog was installed into, you can find it [here](https://hub.docker.com/repository/docker/stmagalios/tomcat_eclipseclp)
+To test the webhooks locally, you can use a tunneling application (e.g. [ngrok](https://ngrok.com/)).
+
+### Database migrations
+
+This app uses Prisma. The migration files are located at `/prisma/migrations`. You need to perform the migrations manually.
+
+### Scheduler
+
+The scheduler used in the app to generate timetables is custom-made and available [here](https://github.com/steliosmagalios/university-scheduler). Since the scheduler is made in ECLiPSe Prolog you can use [this server](https://github.com/steliosmagalios/unischeduler-server) to run and interact with it.
+
+### Running the application
+
+To run the application you need to setup the environment based on the above paragraphs. Alternatively, you can use the included `docker-compose` file to start a postgres database and a scheduler.
+
+NOTE: For the database to work properly you need to perform the migrations first. To perform the migrations you can use Prisma and run the following command `pnpm prisma migrate deploy`. Since this project uses `pnpm` it is advised to it instead of another package manager (e.e. `npm`). You can install `pnpm` by having nodejs installed and running the folowing command `npm install -g pnpm`.
+
+## Docker
+
+The app comes with a `docker-compose.yml` that starts a PostgreSQL and a Scheduler. Currently, there is no support for adding the app as a container (still W.I.P).
