@@ -31,6 +31,8 @@ To run the application you need to setup the environment based on the above para
 
 NOTE: For the database to work properly you need to perform the migrations first. To perform the migrations you can use Prisma and run the following command `pnpm prisma migrate deploy`. Since this project uses `pnpm` it is advised to it instead of another package manager (e.e. `npm`). You can install `pnpm` by having nodejs installed and running the folowing command `npm install -g pnpm`.
 
+NOTE 2: To be able to access the dashboard without tampering with the database you need to add an email to the `ADMIN_EMAIL` environment variable.
+
 ## Docker
 
 This app was built to be hosted in a docker-compose. You can run the whole app be having docker installed and running `docker-compose up`.
