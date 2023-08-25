@@ -33,4 +33,4 @@ NOTE: For the database to work properly you need to perform the migrations first
 
 ## Docker
 
-The app comes with a `docker-compose.yml` that starts a PostgreSQL and a Scheduler. Currently, there is no support for adding the app as a container (still W.I.P).
+This app was built to be hosted in a docker-compose. You can run the whole app be having docker installed and running `docker-compose up`.

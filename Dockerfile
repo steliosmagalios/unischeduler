@@ -38,8 +38,8 @@ RUN \
 
 # Start Next.js based on the preferred package manager
 CMD \
-  if [ -f yarn.lock ]; then yarn start; \
-  elif [ -f package-lock.json ]; then npm run start; \
-  elif [ -f pnpm-lock.yaml ]; then pnpm start; \
-  else yarn start; \
+  if [ -f yarn.lock ]; then yarn migrate:start; \
+  elif [ -f package-lock.json ]; then npm run migrate:start; \
+  elif [ -f pnpm-lock.yaml ]; then pnpm migrate:start; \
+  else yarn migrate:start; \
   fi
