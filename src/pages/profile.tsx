@@ -129,7 +129,7 @@ export default function Profile({ userId }: { userId: string }) {
 }
 
 type LectureCardListProps = {
-  timetable: CurrentTimetable;
+  timetable: CurrentTimetable | null;
 };
 
 function LectureCardList(props: LectureCardListProps) {

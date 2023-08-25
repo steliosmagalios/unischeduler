@@ -1,4 +1,21 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "<REDACTED>"
+        NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "/profile"
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    image: unischeduler-app
+    env_file:
+      - .env
+    depends_on:
+      - database
+      - scheduler
+
   database:
     image: 'postgres:latest'
     ports:
@@ -7,6 +24,7 @@ services:
       - .env
     volumes:
       - database-data:/var/lib/postgresql/data/
+
   scheduler:
     image: 'stmagalios/university-scheduler-server:latest'
     ports:

@@ -128,10 +128,7 @@ export const timetableRouter = createTRPCRouter({
     });
 
     if (!data) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "No published timetable found",
-      });
+      return null;
     }
 
     return {
