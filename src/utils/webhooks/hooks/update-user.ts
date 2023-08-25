@@ -1,3 +1,4 @@
+import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 import { type UserData } from "~/utils/webhooks/types";
 
@@ -27,6 +28,7 @@ export default async function updateUser(data: UserData): Promise<boolean> {
         lastName: data.last_name,
         imageUrl: data.image_url,
         email: email.email_address,
+        role: email.email_address === env.ADMIN_EMAIL ? "Admin" : "User",
       },
     });
   } catch (_) {
