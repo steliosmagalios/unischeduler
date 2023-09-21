@@ -55,14 +55,23 @@ type DetailsSlotProps = {
   task: TimetableTask;
 } & Pick<SlotProps, "className" | "multiplier">;
 
+function boundTime(time: number, limit: number) {
+  return (time + Math.floor((time - 1) / limit)) % (limit + 1);
+}
+
 export function DetailsSlot(props: DetailsSlotProps) {
   const formattedTime = useMemo(() => {
     const startTime =
-      ((props.task.startTime - 1) % (TIMESLOTS.length - 1)) + TIMESLOTS[0];
+      (boundTime(props.task.startTime, TIMESLOTS.length) % TIMESLOTS.length) +
+      TIMESLOTS[0] -
+      1;
     const endTime =
-      ((props.task.startTime + props.task.lecture.duration - 1) %
-        (TIMESLOTS.length - 1)) +
-      TIMESLOTS[0];
+      boundTime(
+        props.task.startTime + props.task.lecture.duration,
+        TIMESLOTS.length
+      ) +
+      TIMESLOTS[0] -
+      1;
 
     return `${startTime.toString().padStart(2, "0")}:00 - ${endTime
       .toString()
