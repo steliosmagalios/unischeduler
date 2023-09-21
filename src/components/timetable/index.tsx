@@ -24,7 +24,7 @@ export default function Timetable(props: TimetableProps) {
       <TabsList>
         {parsedTimetable.map((timetable) => (
           <TabsTrigger key={timetable.label} value={timetable.label}>
-            Semester {timetable.label} {timetable.timetable.length}
+            Semester {timetable.label}
           </TabsTrigger>
         ))}
       </TabsList>
