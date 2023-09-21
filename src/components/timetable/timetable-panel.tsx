@@ -18,7 +18,7 @@ export default function TimetablePanel(props: Props) {
     };
 
     props.data.forEach((task) => {
-      const day = DAYS[Math.floor(task.startTime / TIMESLOTS.length)];
+      const day = DAYS[Math.floor((task.startTime - 1) / TIMESLOTS.length)];
 
       if (day === undefined) {
         return;
@@ -32,18 +32,14 @@ export default function TimetablePanel(props: Props) {
 
   return (
     <>
-      {DAYS.map((day, dayIdx) => {
+      {DAYS.map((day) => {
         const dayItems = parsedData[day];
 
         return (
           <div key={day} className="flex flex-col gap-px">
             <Slot className="font-bold">{day}</Slot>
 
-            {parseTimetable(
-              dayItems,
-              TIMESLOTS.length,
-              dayIdx * (TIMESLOTS.length - 1)
-            ).map((item, idx) => {
+            {parseTimetable(dayItems, TIMESLOTS.length).map((item, idx) => {
               if (!item) {
                 return <Slot key={idx} />;
               }
@@ -74,15 +70,32 @@ export type TableItem = {
 
 function parseTimetable(
   table: Table,
-  limit: number,
-  offset = 0
+  limit: number
 ): Array<TimetableTask | null> {
   const parsed: Array<TimetableTask | null> = [];
 
-  for (let i = 1; i <= limit; i++) {
-    const item = table.find((item) => item.startTime === i + offset);
+  const test = table
+    .map((item) => {
+      const dm =
+        ((item.startTime + Math.floor((item.startTime - 1) / limit)) %
+          (limit + 1)) -
+        1;
 
-    if (item) {
+      console.log("dm: ", dm, "start:", item.startTime);
+
+      return {
+        item,
+        dayMap: dm,
+      };
+    })
+    .sort((a, b) => a.dayMap - b.dayMap);
+
+  for (let i = 0; i < TIMESLOTS.length; i++) {
+    const itemObj = test.find((item) => item.dayMap === i);
+
+    if (itemObj) {
+      const { item } = itemObj;
+
       parsed.push(item);
       i += item.lecture.duration ? item.lecture.duration - 1 : 0;
     } else {

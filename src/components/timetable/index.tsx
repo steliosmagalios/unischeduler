@@ -24,7 +24,7 @@ export default function Timetable(props: TimetableProps) {
       <TabsList>
         {parsedTimetable.map((timetable) => (
           <TabsTrigger key={timetable.label} value={timetable.label}>
-            Semester {timetable.label}
+            Semester {timetable.label} {timetable.timetable.length}
           </TabsTrigger>
         ))}
       </TabsList>
@@ -77,7 +77,7 @@ function newParse(data: CurrentTimetable) {
       let timetableCount = 0;
       while (tasks.length > 0) {
         const currTimetable: TimetableTask[] = [];
-        for (let index = 1; index < DAYS.length * TIMESLOTS.length; ) {
+        for (let index = 1; index < DAYS.length * TIMESLOTS.length + 1; ) {
           const taskIndex = tasks.findIndex((t) => t.startTime === index);
           if (taskIndex === -1) {
             index++;
