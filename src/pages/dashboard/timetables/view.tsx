@@ -50,7 +50,7 @@ export default function GeneratePage({ userId, timetableId }: PageProps) {
 
   return (
     <DashboardLayout
-      label="Generate Timetable"
+      label="View Timetable"
       userId={userId}
       className="flex flex-col gap-2"
     >
