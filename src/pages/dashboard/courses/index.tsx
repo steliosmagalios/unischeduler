@@ -163,8 +163,8 @@ function ViewCourse(props: { item: Course }) {
           <p>
             {data
               .flatMap((i) => i.professors)
-              .filter((v, idx, arr) => arr.indexOf(v) === idx)
               .map((p) => `${p.firstName ?? ""} ${p.lastName ?? ""}`)
+              .filter((v, idx, arr) => arr.indexOf(v) === idx)
               .join(", ")}
           </p>
         </div>
@@ -174,8 +174,8 @@ function ViewCourse(props: { item: Course }) {
           <p>
             {data
               .flatMap((i) => i.groups)
-              .filter((v, idx, arr) => arr.indexOf(v) === idx)
               .map((g) => g.name)
+              .filter((v, idx, arr) => arr.indexOf(v) === idx)
               .join(", ")}
           </p>
         </div>
