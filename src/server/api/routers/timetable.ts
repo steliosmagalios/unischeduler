@@ -298,26 +298,32 @@ export const timetableRouter = createTRPCRouter({
         },
       });
 
+      const dirtyLectures = lectures.map((lecture) => ({
+        id: lecture.id,
+        duration: lecture.duration,
+        type: lecture.type,
+        professors: lecture.professors.map((professor) => professor.id),
+        groups: lecture.groups.map((group) => group.id),
+      }));
+
+      const dirtyProfessors = lectures.flatMap((lecture) => lecture.professors);
+
+      const dirtyGroups = lectures.flatMap((lecture) =>
+        lecture.groups.map((g) => ({
+          id: g.id,
+          size: g.size,
+          overlapping: g.overlappedBy.map((o) => o.id),
+        }))
+      );
+
       const body = {
-        lectures: lectures.map((lecture) => ({
-          id: lecture.id,
-          duration: lecture.duration,
-          type: lecture.type,
-          professors: lecture.professors.map((professor) => professor.id),
-          groups: lecture.groups.map((group) => group.id),
-        })),
-        professors: lectures.flatMap((lecture) => lecture.professors),
-        groups: lectures.flatMap((lecture) =>
-          lecture.groups.map((g) => ({
-            id: g.id,
-            size: g.size,
-            overlapping: g.overlappedBy.map((o) => o.id),
-          }))
-        ),
+        lectures: deduplicate(dirtyLectures),
+        professors: deduplicate(dirtyProfessors),
+        groups: deduplicate(dirtyGroups),
         rooms: rooms,
       };
 
-      // console.log(JSON.stringify(body, null, 2));
+      console.log(JSON.stringify(body, null, 2));
 
       const res = await fetch(env.SCHEDULER_URL, {
         method: "POST",
@@ -382,3 +388,18 @@ type SchedulerResponse =
       error: string;
       data: null;
     };
+
+// Remove duplicates from an array of objects
+function deduplicate<T extends { id: number }>(list: Array<T>): Array<T> {
+  const ids = new Set<number>();
+  const result = new Array<T>();
+
+  for (const item of list) {
+    if (!ids.has(item.id)) {
+      ids.add(item.id);
+      result.push(item);
+    }
+  }
+
+  return result;
+}
