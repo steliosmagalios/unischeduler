@@ -24,6 +24,7 @@ import {
 import { api } from "~/utils/api";
 import { TIMESLOTS, type CurrentTimetable } from "~/utils/constants";
 import getCurrentUser from "~/utils/get-current-user";
+import { boundTime } from "~/utils/lib";
 
 // eslint-disable-next-line @typescript-eslint/require-await
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -140,7 +141,7 @@ function LectureCardList(props: LectureCardListProps) {
     // const today = 0;
 
     const filteredToday = props.timetable?.tasks.filter(
-      (task) => Math.floor(task.startTime / TIMESLOTS.length) === today
+      (task) => Math.floor((task.startTime - 1) / TIMESLOTS.length) === today
     );
 
     return filteredToday?.filter(
@@ -199,13 +200,18 @@ type LectureCardProps = {
 
 function LectureCard(props: LectureCardProps) {
   const { startTime, duration } = props;
-  const formattedTime = useMemo(
-    () =>
-      `${startTime.toString().padStart(2, "0")}:00 - ${(startTime + duration)
-        .toString()
-        .padStart(2, "0")}:00`,
-    [startTime, duration]
-  );
+  const formattedTime = useMemo(() => {
+    const st =
+      (boundTime(startTime, TIMESLOTS.length) % TIMESLOTS.length) +
+      TIMESLOTS[0] -
+      1;
+    const et =
+      boundTime(startTime + duration, TIMESLOTS.length) + TIMESLOTS[0] - 1;
+
+    return `${st.toString().padStart(2, "0")}:00 - ${et
+      .toString()
+      .padStart(2, "0")}:00`;
+  }, [startTime, duration]);
 
   return (
     <div className="rounded-sm border bg-muted p-3 dark:bg-neutral-900">

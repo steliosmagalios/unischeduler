@@ -2,6 +2,7 @@ import { Dialog } from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 import { DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { TIMESLOTS, type TimetableTask } from "~/utils/constants";
+import { boundTime } from "~/utils/lib";
 import { cn } from "~/utils/shad-utils";
 
 // This needs to exist because tailwind
@@ -54,10 +55,6 @@ export default function Slot(props: SlotProps) {
 type DetailsSlotProps = {
   task: TimetableTask;
 } & Pick<SlotProps, "className" | "multiplier">;
-
-function boundTime(time: number, limit: number) {
-  return (time + Math.floor((time - 1) / limit)) % (limit + 1);
-}
 
 export function DetailsSlot(props: DetailsSlotProps) {
   const formattedTime = useMemo(() => {
